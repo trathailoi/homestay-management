@@ -1,16 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import api, { type ApiResponse } from "@/lib/api";
-import type { AdditionalFee, Booking } from "@/lib/types";
+import Link from "next/link";
+import api, { ApiError, type ApiResponse } from "@/lib/api";
+import type { Booking, AdditionalFee } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -20,13 +27,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type BookingStatus = Booking["status"];
 
@@ -53,6 +53,10 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function formatCurrency(amount: string): string {
+  return `$${parseFloat(amount).toFixed(2)}`;
+}
+
 function formatDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString("en-US", {
     month: "short",
@@ -63,15 +67,11 @@ function formatDateTime(dateStr: string): string {
   });
 }
 
-function formatCurrency(amount: string): string {
-  return `$${parseFloat(amount).toFixed(2)}`;
-}
-
-const FEE_TYPE_LABELS: Record<AdditionalFee["type"], string> = {
-  early_checkin: "Early Check-in",
-  late_checkout: "Late Checkout",
-  other: "Other",
-};
+const FEE_TYPES = [
+  { value: "early_checkin", label: "Early Check-in" },
+  { value: "late_checkout", label: "Late Check-out" },
+  { value: "other", label: "Other" },
+];
 
 export default function BookingDetailPage() {
   const params = useParams();
@@ -81,18 +81,16 @@ export default function BookingDetailPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-
-  // Cancel dialog state
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
 
-  // Add fee form state
-  const [feeType, setFeeType] = useState<AdditionalFee["type"]>("other");
+  // Additional fee form state
+  const [feeType, setFeeType] = useState<string>("other");
   const [feeDescription, setFeeDescription] = useState("");
   const [feeAmount, setFeeAmount] = useState("");
-  const [feeLoading, setFeeLoading] = useState(false);
+  const [addingFee, setAddingFee] = useState(false);
 
-  const fetchBooking = useCallback(async () => {
+  const fetchBooking = async () => {
     try {
       const response = await api.get<ApiResponse<Booking>>(`/bookings/${bookingId}`);
       setBooking(response.data);
@@ -101,11 +99,11 @@ export default function BookingDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [bookingId]);
+  };
 
   useEffect(() => {
     fetchBooking();
-  }, [fetchBooking]);
+  }, [bookingId]);
 
   async function handleAction(action: "confirm" | "check-in" | "check-out") {
     setActionLoading(true);
@@ -113,7 +111,8 @@ export default function BookingDetailPage() {
       await api.post(`/bookings/${bookingId}/${action}`);
       await fetchBooking();
     } catch (error) {
-      console.error(`Failed to ${action} booking:`, error);
+      console.error(`Failed to ${action}:`, error);
+      alert(error instanceof ApiError ? error.message : `Failed to ${action}`);
     } finally {
       setActionLoading(false);
     }
@@ -122,12 +121,13 @@ export default function BookingDetailPage() {
   async function handleCancel() {
     setActionLoading(true);
     try {
-      await api.post(`/bookings/${bookingId}/cancel`, { reason: cancelReason || undefined });
+      await api.post(`/bookings/${bookingId}/cancel`, { reason: cancelReason || "Cancelled" });
       setCancelDialogOpen(false);
       setCancelReason("");
       await fetchBooking();
     } catch (error) {
-      console.error("Failed to cancel booking:", error);
+      console.error("Failed to cancel:", error);
+      alert(error instanceof ApiError ? error.message : "Failed to cancel booking");
     } finally {
       setActionLoading(false);
     }
@@ -135,42 +135,50 @@ export default function BookingDetailPage() {
 
   async function handleAddFee(e: React.FormEvent) {
     e.preventDefault();
-    if (!booking) return;
+    if (!booking || !feeDescription || !feeAmount) return;
 
-    setFeeLoading(true);
+    setAddingFee(true);
     try {
-      const existingFees = booking.additional_fees || [];
       const newFee: AdditionalFee = {
-        type: feeType,
+        type: feeType as "early_checkin" | "late_checkout" | "other",
         description: feeDescription,
         amount: feeAmount,
       };
-      const updatedFees = [...existingFees, newFee];
-
-      await api.patch(`/bookings/${bookingId}`, { additional_fees: updatedFees });
+      const existingFees = booking.additional_fees || [];
+      await api.patch(`/bookings/${bookingId}`, {
+        additional_fees: [...existingFees, newFee],
+      });
       setFeeType("other");
       setFeeDescription("");
       setFeeAmount("");
       await fetchBooking();
     } catch (error) {
       console.error("Failed to add fee:", error);
+      alert(error instanceof ApiError ? error.message : "Failed to add fee");
     } finally {
-      setFeeLoading(false);
+      setAddingFee(false);
     }
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="flex items-center justify-center h-full">
+        <p className="text-slate-500">Loading booking...</p>
       </div>
     );
   }
 
   if (!booking) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Booking not found</div>
+      <div className="p-6">
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <p className="text-red-700">Booking not found</p>
+            <Button onClick={() => router.push("/bookings")} className="mt-4" variant="outline">
+              Back to Bookings
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -179,45 +187,44 @@ export default function BookingDetailPage() {
   const canCancel = booking.status === "pending" || booking.status === "confirmed";
 
   // Calculate total with fees
-  const baseFees = booking.additional_fees || [];
-  const totalFees = baseFees.reduce((sum, fee) => sum + parseFloat(fee.amount), 0);
-  const grandTotal = parseFloat(booking.total_amount) + totalFees;
+  const baseFees = booking.additional_fees?.reduce(
+    (sum, fee) => sum + parseFloat(fee.amount),
+    0
+  ) || 0;
+  const totalWithFees = parseFloat(booking.total_amount) + baseFees;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            &larr; Back
-          </Button>
-          <h1 className="text-2xl font-bold">Booking Details</h1>
-          <Badge variant={getStatusVariant(booking.status)}>
-            {booking.status.replace("_", " ")}
-          </Badge>
-        </div>
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push("/bookings")}>
+          &larr; Back
+        </Button>
+        <h1 className="text-2xl font-bold">Booking Details</h1>
+        <Badge variant={getStatusVariant(booking.status)} className="text-sm">
+          {booking.status.replace("_", " ")}
+        </Badge>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Left Column: Booking Info */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Booking Info */}
         <Card>
           <CardHeader>
             <CardTitle>Booking Information</CardTitle>
-            <CardDescription>Guest and reservation details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">Guest Name</div>
-                <div className="font-medium">{booking.guest_name}</div>
+                <p className="text-sm text-muted-foreground">Guest Name</p>
+                <p className="font-medium">{booking.guest_name}</p>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Phone</div>
-                <div className="font-medium">{booking.guest_phone}</div>
+                <p className="text-sm text-muted-foreground">Phone</p>
+                <p className="font-medium">{booking.guest_phone}</p>
               </div>
             </div>
 
             <div>
-              <div className="text-sm text-muted-foreground">Room</div>
+              <p className="text-sm text-muted-foreground">Room</p>
               <Link
                 href={`/rooms/${booking.room_id}`}
                 className="font-medium text-primary hover:underline"
@@ -228,89 +235,93 @@ export default function BookingDetailPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">Check-in</div>
-                <div className="font-medium">{formatDate(booking.check_in_date)}</div>
+                <p className="text-sm text-muted-foreground">Check-in</p>
+                <p className="font-medium">{formatDate(booking.check_in_date)}</p>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Check-out</div>
-                <div className="font-medium">{formatDate(booking.check_out_date)}</div>
+                <p className="text-sm text-muted-foreground">Check-out</p>
+                <p className="font-medium">{formatDate(booking.check_out_date)}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">Number of Guests</div>
-                <div className="font-medium">{booking.num_guests}</div>
+                <p className="text-sm text-muted-foreground">Guests</p>
+                <p className="font-medium">
+                  {booking.num_guests} {booking.num_guests === 1 ? "guest" : "guests"}
+                </p>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Base Amount</div>
-                <div className="font-medium">{formatCurrency(booking.total_amount)}</div>
+                <p className="text-sm text-muted-foreground">Base Amount</p>
+                <p className="font-medium">{formatCurrency(booking.total_amount)}</p>
               </div>
             </div>
 
             {booking.special_requests && (
               <div>
-                <div className="text-sm text-muted-foreground">Special Requests</div>
-                <div className="mt-1 text-sm bg-slate-50 p-3 rounded-md">
-                  {booking.special_requests}
-                </div>
+                <p className="text-sm text-muted-foreground">Special Requests</p>
+                <p className="text-sm bg-slate-50 p-2 rounded mt-1">{booking.special_requests}</p>
               </div>
             )}
 
-            {booking.status === "cancelled" && booking.cancelled_at && (
+            {booking.status === "cancelled" && (
               <div className="border-t pt-4 mt-4">
-                <div className="text-sm font-medium text-destructive">Cancellation Info</div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  Cancelled on {formatDateTime(booking.cancelled_at)}
-                </div>
-                {booking.cancellation_reason && (
-                  <div className="mt-2 text-sm bg-red-50 p-3 rounded-md text-red-700">
-                    {booking.cancellation_reason}
-                  </div>
+                <p className="text-sm text-muted-foreground">Cancellation</p>
+                <p className="text-red-600 font-medium">
+                  {booking.cancellation_reason || "No reason provided"}
+                </p>
+                {booking.cancelled_at && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Cancelled on {formatDateTime(booking.cancelled_at)}
+                  </p>
                 )}
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Right Column: Actions + Fees */}
+        {/* Right column: Actions and Fees */}
         <div className="space-y-6">
-          {/* Actions Card */}
+          {/* Actions Card - only for non-terminal bookings */}
           {!isTerminal && (
             <Card>
               <CardHeader>
                 <CardTitle>Actions</CardTitle>
-                <CardDescription>Update booking status</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
                 {booking.status === "pending" && (
                   <Button
-                    onClick={() => handleAction("confirm")}
                     disabled={actionLoading}
+                    onClick={() => handleAction("confirm")}
                   >
-                    Confirm Booking
+                    {actionLoading ? "..." : "Confirm Booking"}
                   </Button>
                 )}
+
                 {booking.status === "confirmed" && (
                   <Button
-                    onClick={() => handleAction("check-in")}
                     disabled={actionLoading}
+                    onClick={() => handleAction("check-in")}
                   >
-                    Check In Guest
+                    {actionLoading ? "..." : "Check In"}
                   </Button>
                 )}
+
                 {booking.status === "checked_in" && (
                   <Button
-                    onClick={() => handleAction("check-out")}
                     disabled={actionLoading}
+                    onClick={() => handleAction("check-out")}
                   >
-                    Check Out Guest
+                    {actionLoading ? "..." : "Check Out"}
                   </Button>
                 )}
+
                 {canCancel && (
                   <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="destructive">Cancel Booking</Button>
+                      <Button variant="destructive" disabled={actionLoading}>
+                        Cancel Booking
+                      </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
@@ -319,26 +330,29 @@ export default function BookingDetailPage() {
                           Are you sure you want to cancel this booking? This action cannot be undone.
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="space-y-2">
-                        <Label htmlFor="cancelReason">Reason (optional)</Label>
+                      <div className="py-4">
+                        <Label htmlFor="cancel-reason">Cancellation Reason (optional)</Label>
                         <Textarea
-                          id="cancelReason"
+                          id="cancel-reason"
+                          placeholder="Enter reason for cancellation..."
                           value={cancelReason}
                           onChange={(e) => setCancelReason(e.target.value)}
-                          placeholder="Enter cancellation reason..."
-                          rows={3}
+                          className="mt-2"
                         />
                       </div>
                       <DialogFooter>
-                        <Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
+                        <Button
+                          variant="outline"
+                          onClick={() => setCancelDialogOpen(false)}
+                        >
                           Keep Booking
                         </Button>
                         <Button
                           variant="destructive"
-                          onClick={handleCancel}
                           disabled={actionLoading}
+                          onClick={handleCancel}
                         >
-                          Confirm Cancellation
+                          {actionLoading ? "Cancelling..." : "Confirm Cancellation"}
                         </Button>
                       </DialogFooter>
                     </DialogContent>
@@ -352,82 +366,80 @@ export default function BookingDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Additional Fees</CardTitle>
-              <CardDescription>Extra charges for this booking</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Existing fees list */}
-              {baseFees.length > 0 ? (
+              {/* Existing fees */}
+              {booking.additional_fees && booking.additional_fees.length > 0 ? (
                 <div className="space-y-2">
-                  {baseFees.map((fee, index) => (
+                  {booking.additional_fees.map((fee, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between py-2 border-b last:border-0"
+                      className="flex items-center justify-between p-2 bg-slate-50 rounded"
                     >
                       <div>
-                        <div className="font-medium text-sm">
-                          {FEE_TYPE_LABELS[fee.type]}
-                        </div>
-                        <div className="text-sm text-muted-foreground">{fee.description}</div>
+                        <Badge variant="outline" className="mr-2">
+                          {FEE_TYPES.find((t) => t.value === fee.type)?.label || fee.type}
+                        </Badge>
+                        <span className="text-sm">{fee.description}</span>
                       </div>
-                      <div className="font-medium">{formatCurrency(fee.amount)}</div>
+                      <span className="font-medium">{formatCurrency(fee.amount)}</span>
                     </div>
                   ))}
-                  <div className="flex items-center justify-between pt-2 border-t font-medium">
-                    <div>Total with Fees</div>
-                    <div>{formatCurrency(grandTotal.toString())}</div>
+                  <div className="border-t pt-2 flex justify-between font-semibold">
+                    <span>Total with fees</span>
+                    <span>{formatCurrency(totalWithFees.toFixed(2))}</span>
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-muted-foreground">No additional fees</div>
+                <p className="text-sm text-muted-foreground">No additional fees</p>
               )}
 
-              {/* Add fee form */}
+              {/* Add fee form - only for non-terminal bookings */}
               {!isTerminal && (
-                <form onSubmit={handleAddFee} className="space-y-3 pt-4 border-t">
-                  <div className="text-sm font-medium">Add New Fee</div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <Label htmlFor="feeType">Type</Label>
-                      <Select
-                        value={feeType}
-                        onValueChange={(v) => setFeeType(v as AdditionalFee["type"])}
-                      >
-                        <SelectTrigger>
+                <form onSubmit={handleAddFee} className="border-t pt-4 space-y-3">
+                  <p className="text-sm font-medium">Add Fee</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="fee-type">Type</Label>
+                      <Select value={feeType} onValueChange={setFeeType}>
+                        <SelectTrigger id="fee-type">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="early_checkin">Early Check-in</SelectItem>
-                          <SelectItem value="late_checkout">Late Checkout</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          {FEE_TYPES.map((type) => (
+                            <SelectItem key={type.value} value={type.value}>
+                              {type.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-1">
-                      <Label htmlFor="feeAmount">Amount ($)</Label>
+                    <div>
+                      <Label htmlFor="fee-amount">Amount</Label>
                       <Input
-                        id="feeAmount"
+                        id="fee-amount"
                         type="number"
-                        min="0"
                         step="0.01"
+                        min="0"
+                        placeholder="0.00"
                         value={feeAmount}
                         onChange={(e) => setFeeAmount(e.target.value)}
-                        placeholder="0.00"
                         required
                       />
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="feeDescription">Description</Label>
+                  <div>
+                    <Label htmlFor="fee-description">Description</Label>
                     <Input
-                      id="feeDescription"
+                      id="fee-description"
+                      placeholder="e.g., Early check-in at 10am"
                       value={feeDescription}
                       onChange={(e) => setFeeDescription(e.target.value)}
-                      placeholder="e.g., Early check-in at 10am"
                       required
                     />
                   </div>
-                  <Button type="submit" size="sm" disabled={feeLoading}>
-                    {feeLoading ? "Adding..." : "Add Fee"}
+                  <Button type="submit" size="sm" disabled={addingFee}>
+                    {addingFee ? "Adding..." : "Add Fee"}
                   </Button>
                 </form>
               )}

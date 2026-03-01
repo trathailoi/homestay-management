@@ -46,13 +46,13 @@ export default function DashboardPage() {
         ),
         api.get<{ data: Booking[] }>("/bookings?status=checked_in"),
         api.get<{ data: Booking[] }>("/bookings?status=pending"),
-        api.get<Room[]>("/rooms"),
+        api.get<{ data: Room[] }>("/rooms"),
       ]);
 
       const arrivals = arrivalsRes.data;
       const checkedIn = checkedInRes.data;
       const pending = pendingRes.data;
-      const rooms = roomsRes;
+      const rooms = roomsRes.data;
 
       // Split checked-in bookings into departures today vs overdue
       const departures = checkedIn.filter((b) => b.check_out_date === today);
