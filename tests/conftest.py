@@ -8,6 +8,8 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.database import Base, get_session
+# Import all models so they register with Base.metadata
+from app.models import Booking, Room, RoomAvailability, User  # noqa: F401
 
 # Test database using SQLite with aiosqlite driver
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"

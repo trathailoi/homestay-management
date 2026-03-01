@@ -20,5 +20,10 @@ class Settings(BaseSettings):
     # Availability configuration
     availability_window_days: int = 365
 
+    # JWT Authentication
+    jwt_secret_key: str = "change-me-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expire_minutes: int = 480  # 8 hours - typical receptionist shift
+
 
 settings = Settings()

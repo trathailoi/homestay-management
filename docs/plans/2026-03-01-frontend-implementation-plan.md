@@ -1,6 +1,5 @@
 # Homestay Management Frontend Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Build a Next.js frontend with a guest portal (public room search + booking requests) and a receptionist dashboard (room management, booking lifecycle, calendar view) backed by the existing FastAPI API.
 

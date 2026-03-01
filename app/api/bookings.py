@@ -31,17 +31,19 @@ async def list_bookings(
     room_id: UUID | None = None,
     check_in_from: date | None = None,
     check_in_to: date | None = None,
+    guest_search: str | None = None,
     page: int = 1,
     per_page: int = 20,
     session: AsyncSession = Depends(get_session),
 ) -> ListResponse[BookingResponse]:
-    """List bookings with optional filtering and date range."""
+    """List bookings with optional filtering, guest search, and date range."""
     service = BookingService(session)
     bookings, total = await service.list_bookings(
         status=status,
         room_id=room_id,
         check_in_from=check_in_from,
         check_in_to=check_in_to,
+        guest_search=guest_search,
         page=page,
         per_page=per_page,
     )
@@ -137,6 +139,7 @@ def _booking_to_response(booking) -> BookingResponse:
         idempotency_key=booking.idempotency_key,
         cancelled_at=booking.cancelled_at,
         cancellation_reason=booking.cancellation_reason,
+        additional_fees=booking.additional_fees,
         created_at=booking.created_at,
         updated_at=booking.updated_at,
     )

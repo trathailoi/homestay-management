@@ -178,6 +178,7 @@ class BookingService:
         room_id: UUID | None = None,
         check_in_from: date | None = None,
         check_in_to: date | None = None,
+        guest_search: str | None = None,
         page: int = 1,
         per_page: int = 20,
     ) -> tuple[list[Booking], int]:
@@ -196,6 +197,16 @@ class BookingService:
             query = query.where(Booking.check_in_date >= check_in_from)
         if check_in_to:
             query = query.where(Booking.check_in_date <= check_in_to)
+        if guest_search:
+            # Case-insensitive partial match on guest name or phone
+            pattern = f"%{guest_search}%"
+            from sqlalchemy import or_
+            query = query.where(
+                or_(
+                    Booking.guest_name.ilike(pattern),
+                    Booking.guest_phone.ilike(pattern),
+                )
+            )
 
         # Get total count before pagination
         count_query = select(func.count()).select_from(query.subquery())
@@ -229,6 +240,12 @@ class BookingService:
 
         update_data = data.model_dump(exclude_unset=True)
         for field, value in update_data.items():
+            # Convert Decimal to string in additional_fees for JSON serialization
+            if field == "additional_fees" and value is not None:
+                value = [
+                    {**fee, "amount": str(fee["amount"])}
+                    for fee in value
+                ]
             setattr(booking, field, value)
 
         await self.session.commit()

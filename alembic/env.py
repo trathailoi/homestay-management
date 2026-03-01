@@ -12,7 +12,7 @@ from app.config import settings
 from app.database import Base
 
 # Import all models so they register with Base.metadata
-from app.models import Booking, Room, RoomAvailability  # noqa: F401
+from app.models import Booking, Room, RoomAvailability, User  # noqa: F401
 
 # This is the Alembic Config object
 config = context.config

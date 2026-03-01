@@ -1,9 +1,11 @@
 """FastAPI application entry point."""
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
+from app.api.auth import router as auth_router
 from app.api.availability import router as availability_router
 from app.api.bookings import router as bookings_router
 from app.api.rooms import router as rooms_router
@@ -15,6 +17,7 @@ from app.exceptions import (
     RoomNotAvailableError,
     RoomNotFoundError,
 )
+from app.services.auth_service import AuthenticationError
 
 app = FastAPI(
     title="Homestay Management API",
@@ -22,7 +25,18 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# CORS middleware for Next.js development server
+# In production, API calls are proxied through Next.js rewrites (same origin)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,  # Required for httpOnly cookie auth
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Include routers
+app.include_router(auth_router, prefix="/api/v1")
 app.include_router(rooms_router, prefix="/api/v1")
 app.include_router(bookings_router, prefix="/api/v1")
 app.include_router(availability_router, prefix="/api/v1")
@@ -106,6 +120,24 @@ async def booking_validation_handler(
     """Handle booking validation errors -> 400."""
     return JSONResponse(
         status_code=400,
+        content={
+            "success": False,
+            "error": {
+                "code": exc.code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        },
+    )
+
+
+@app.exception_handler(AuthenticationError)
+async def authentication_error_handler(
+    request: Request, exc: AuthenticationError
+) -> JSONResponse:
+    """Handle authentication errors -> 401."""
+    return JSONResponse(
+        status_code=401,
         content={
             "success": False,
             "error": {
