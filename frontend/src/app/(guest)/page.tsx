@@ -33,10 +33,10 @@ export default function GuestSearchPage() {
         check_out: checkOut,
         guests: guests.toString(),
       });
-      const data = await api.get<AvailableRoom[]>(
+      const response = await api.get<{ data: AvailableRoom[] }>(
         `/availability?${params.toString()}`
       );
-      setRooms(data);
+      setRooms(response.data);
     } catch (err) {
       console.error("Search failed:", err);
       setError("Failed to search. Please check your dates and try again.");

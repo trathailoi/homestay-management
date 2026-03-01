@@ -55,8 +55,8 @@ export default function BookingRequestPage() {
         idempotency_key: generateIdempotencyKey(),
       };
 
-      const result = await api.post<Booking>("/bookings", request);
-      setBooking(result);
+      const response = await api.post<{ data: Booking }>("/bookings", request);
+      setBooking(response.data);
     } catch (err) {
       console.error("Booking failed:", err);
       const errorMessage =
