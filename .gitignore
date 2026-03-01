@@ -45,3 +45,16 @@ coverage/
 
 # bv (beads viewer) local config and caches
 .bv/
+
+# Claude Code local config
+.claude/
+
+# NTM local config
+.ntm/
+
+# Claude mem project config
+docs/plans/CLAUDE.md
+
+# Temp files
+test-graph.md
+main.py
