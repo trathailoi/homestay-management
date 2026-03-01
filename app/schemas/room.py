@@ -3,6 +3,7 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
+from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -44,7 +45,7 @@ class RoomResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
-    id: str
+    id: UUID
     room_number: str
     room_type: str
     name: str
