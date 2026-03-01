@@ -128,3 +128,11 @@ export const api = {
 };
 
 export default api;
+
+// Aliases for compatibility with different naming conventions
+export const apiGet = api.get;
+export const apiPost = api.post;
+export const apiPatch = api.patch;
+export const apiPut = api.put;
+export const apiDelete = api.delete;
+export { ApiError as ApiException };
