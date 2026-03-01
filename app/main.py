@@ -13,6 +13,7 @@ from app.database import SessionLocal
 from app.exceptions import (
     BookingNotFoundError,
     BookingValidationError,
+    HomestayError,
     InvalidStatusTransitionError,
     RoomNotAvailableError,
     RoomNotFoundError,
@@ -138,6 +139,24 @@ async def authentication_error_handler(
     """Handle authentication errors -> 401."""
     return JSONResponse(
         status_code=401,
+        content={
+            "success": False,
+            "error": {
+                "code": exc.code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        },
+    )
+
+
+@app.exception_handler(HomestayError)
+async def homestay_error_handler(
+    request: Request, exc: HomestayError
+) -> JSONResponse:
+    """Handle generic HomestayError as 400 Bad Request."""
+    return JSONResponse(
+        status_code=400,
         content={
             "success": False,
             "error": {
