@@ -84,10 +84,10 @@ export default function AvailabilityPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t("availability.title")}</h1>
+      <h1 className="text-xl md:text-2xl font-bold">{t("availability.title")}</h1>
 
       <form onSubmit={handleSearch} className="flex flex-wrap items-end gap-4">
-        <div className="space-y-1">
+        <div className="w-full md:w-auto space-y-1">
           <Label htmlFor="check-in">{t("availability.checkIn")}</Label>
           <Input
             id="check-in"
@@ -97,7 +97,7 @@ export default function AvailabilityPage() {
             required
           />
         </div>
-        <div className="space-y-1">
+        <div className="w-full md:w-auto space-y-1">
           <Label htmlFor="check-out">{t("availability.checkOut")}</Label>
           <Input
             id="check-out"
@@ -107,7 +107,7 @@ export default function AvailabilityPage() {
             required
           />
         </div>
-        <div className="space-y-1">
+        <div className="w-full md:w-auto space-y-1">
           <Label htmlFor="guests">{t("availability.minGuests")}</Label>
           <Input
             id="guests"
@@ -115,10 +115,10 @@ export default function AvailabilityPage() {
             min={0}
             value={guests}
             onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
-            className="w-24"
+            className="md:w-24"
           />
         </div>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="w-full md:w-auto">
           {loading ? t("availability.searching") : t("common.search")}
         </Button>
       </form>

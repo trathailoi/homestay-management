@@ -78,12 +78,12 @@ export default function RoomDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-2 justify-between">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/rooms")}>
             &larr; {t("common.back")}
           </Button>
-          <h1 className="text-2xl font-bold">{t("common.room")} {room.room_number}</h1>
+          <h1 className="text-xl md:text-2xl font-bold">{t("common.room")} {room.room_number}</h1>
           <Badge variant={room.status === "active" ? "default" : "secondary"}>
             {room.status === "active" ? t("rooms.active") : t("rooms.maintenanceStatus")}
           </Badge>

@@ -140,7 +140,7 @@ export default function BookingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("bookings.title")}</h1>
+        <h1 className="text-xl md:text-2xl font-bold">{t("bookings.title")}</h1>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -174,11 +174,11 @@ export default function BookingsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>{t("bookings.guestCol")}</TableHead>
-              <TableHead>{t("bookings.roomCol")}</TableHead>
-              <TableHead>{t("bookings.checkInCol")}</TableHead>
-              <TableHead>{t("bookings.checkOutCol")}</TableHead>
+              <TableHead className="hidden md:table-cell">{t("bookings.roomCol")}</TableHead>
+              <TableHead className="hidden md:table-cell">{t("bookings.checkInCol")}</TableHead>
+              <TableHead className="hidden md:table-cell">{t("bookings.checkOutCol")}</TableHead>
               <TableHead>{t("common.status")}</TableHead>
-              <TableHead className="text-right">{t("bookings.amountCol")}</TableHead>
+              <TableHead className="hidden md:table-cell text-right">{t("bookings.amountCol")}</TableHead>
               <TableHead>{t("common.actions")}</TableHead>
             </TableRow>
           </TableHeader>
@@ -206,16 +206,19 @@ export default function BookingsPage() {
                       {booking.guest_name}
                     </Link>
                     <div className="text-sm text-muted-foreground">{booking.guest_phone}</div>
+                    <div className="text-xs text-muted-foreground md:hidden">
+                      {t("common.room")} {booking.room_number}
+                    </div>
                   </TableCell>
-                  <TableCell>{booking.room_number}</TableCell>
-                  <TableCell>{formatDate(booking.check_in_date)}</TableCell>
-                  <TableCell>{formatDate(booking.check_out_date)}</TableCell>
+                  <TableCell className="hidden md:table-cell">{booking.room_number}</TableCell>
+                  <TableCell className="hidden md:table-cell">{formatDate(booking.check_in_date)}</TableCell>
+                  <TableCell className="hidden md:table-cell">{formatDate(booking.check_out_date)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(booking.status)}>
                       {getStatusLabel(booking.status)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">{formatCurrency(booking.total_amount)}</TableCell>
+                  <TableCell className="hidden md:table-cell text-right">{formatCurrency(booking.total_amount)}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       {booking.status === "pending" && (
@@ -269,7 +272,7 @@ export default function BookingsPage() {
 
       {meta && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+          <div className="hidden md:block text-sm text-muted-foreground">
             {t("common.showing", {
               from: (page - 1) * meta.per_page + 1,
               to: Math.min(page * meta.per_page, meta.total),

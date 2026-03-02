@@ -165,7 +165,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t("dashboard.title")}</h1>
+      <h1 className="text-xl md:text-2xl font-bold">{t("dashboard.title")}</h1>
 
       {/* Occupancy Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -234,7 +234,7 @@ export default function DashboardPage() {
                 {data.arrivals.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    className="flex items-center justify-between p-2 md:p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
@@ -273,7 +273,7 @@ export default function DashboardPage() {
                 {data.departures.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    className="flex items-center justify-between p-2 md:p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
@@ -310,7 +310,7 @@ export default function DashboardPage() {
                 {data.overdue.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800"
+                    className="flex items-center justify-between p-2 md:p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
@@ -353,10 +353,10 @@ export default function DashboardPage() {
                 {data.pending.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    className="flex items-center justify-between p-2 md:p-3 bg-slate-50 dark:bg-slate-800 rounded-lg gap-2"
                   >
-                    <div className="flex-1">
-                      <p className="font-medium">{booking.guest_name}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{booking.guest_name}</p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
                         {t("common.room")} {booking.room_number} &bull; {booking.check_in_date} to{" "}
                         {booking.check_out_date}

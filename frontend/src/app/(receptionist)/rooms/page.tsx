@@ -71,7 +71,7 @@ export default function RoomsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("rooms.title")}</h1>
+        <h1 className="text-xl md:text-2xl font-bold">{t("rooms.title")}</h1>
         <Button onClick={() => setCreateDialogOpen(true)}>{t("rooms.addRoom")}</Button>
       </div>
 
@@ -80,9 +80,9 @@ export default function RoomsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>{t("rooms.roomNumber")}</TableHead>
-              <TableHead>{t("common.name")}</TableHead>
-              <TableHead>{t("common.type")}</TableHead>
-              <TableHead className="text-center">{t("rooms.capacity")}</TableHead>
+              <TableHead className="hidden md:table-cell">{t("common.name")}</TableHead>
+              <TableHead className="hidden md:table-cell">{t("common.type")}</TableHead>
+              <TableHead className="hidden md:table-cell text-center">{t("rooms.capacity")}</TableHead>
               <TableHead className="text-right">{t("rooms.pricePerNight")}</TableHead>
               <TableHead>{t("common.status")}</TableHead>
               <TableHead>{t("common.actions")}</TableHead>
@@ -111,10 +111,11 @@ export default function RoomsPage() {
                     >
                       {room.room_number}
                     </Link>
+                    <div className="text-xs text-muted-foreground md:hidden">{room.name}</div>
                   </TableCell>
-                  <TableCell>{room.name}</TableCell>
-                  <TableCell className="capitalize">{room.room_type}</TableCell>
-                  <TableCell className="text-center">{room.max_occupancy}</TableCell>
+                  <TableCell className="hidden md:table-cell">{room.name}</TableCell>
+                  <TableCell className="hidden md:table-cell capitalize">{room.room_type}</TableCell>
+                  <TableCell className="hidden md:table-cell text-center">{room.max_occupancy}</TableCell>
                   <TableCell className="text-right">
                     {formatCurrency(room.base_price_per_night)}
                   </TableCell>
@@ -142,7 +143,7 @@ export default function RoomsPage() {
 
       {meta && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+          <div className="hidden md:block text-sm text-muted-foreground">
             {t("common.showing", {
               from: (page - 1) * meta.per_page + 1,
               to: Math.min(page * meta.per_page, meta.total),

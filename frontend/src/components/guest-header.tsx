@@ -11,10 +11,10 @@ export function GuestHeader() {
     <header className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-10">
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100">
             {t("guest.homestay")}
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="hidden sm:block text-sm text-slate-600 dark:text-slate-400">
             {t("guest.findRoom")}
           </p>
         </div>

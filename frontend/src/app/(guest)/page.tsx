@@ -163,8 +163,8 @@ export default function GuestSearchPage() {
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <div className="text-right">
+                      <div className="flex flex-col items-start md:items-end gap-2">
+                        <div className="md:text-right">
                           <p className="text-sm text-slate-500 dark:text-slate-400">
                             ${parseFloat(room.base_price_per_night).toFixed(2)}{" "}
                             {t("guest.perNight")}
@@ -174,7 +174,7 @@ export default function GuestSearchPage() {
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">{t("guest.totalLabel")}</p>
                         </div>
-                        <Button onClick={() => handleRequestBooking(room.id)}>
+                        <Button className="w-full md:w-auto" onClick={() => handleRequestBooking(room.id)}>
                           {t("guest.requestBooking")}
                         </Button>
                       </div>

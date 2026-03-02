@@ -206,11 +206,11 @@ export default function BookingDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-2 md:gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/bookings")}>
           &larr; {t("common.back")}
         </Button>
-        <h1 className="text-2xl font-bold">{t("bookingDetail.title")}</h1>
+        <h1 className="text-xl md:text-2xl font-bold">{t("bookingDetail.title")}</h1>
         <Badge variant={getStatusVariant(booking.status)} className="text-sm">
           {getStatusLabel(booking.status)}
         </Badge>
@@ -406,7 +406,7 @@ export default function BookingDetailPage() {
               {!isTerminal && (
                 <form onSubmit={handleAddFee} className="border-t pt-4 space-y-3">
                   <p className="text-sm font-medium">{t("bookingDetail.addFee")}</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div>
                       <Label htmlFor="fee-type">{t("bookingDetail.feeType")}</Label>
                       <Select value={feeType} onValueChange={setFeeType}>
