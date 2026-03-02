@@ -42,3 +42,33 @@ class AvailableRoom(BaseModel):
     base_price_per_night: Decimal
     amenities: list[str] | None
     total_price: float  # Calculated: num_nights * base_price_per_night
+
+
+class BlockingBookingInfo(BaseModel):
+    """Summary of a booking that blocks room availability."""
+
+    id: str
+    guest_name: str
+    guest_phone: str
+    check_in_date: date
+    check_out_date: date
+    status: str
+
+
+class RoomAvailabilityOverview(BaseModel):
+    """Room with availability status for the receptionist overview.
+
+    Available rooms include total_price; unavailable rooms include blocking bookings.
+    """
+
+    id: str
+    room_number: str
+    room_type: str
+    name: str
+    max_occupancy: int
+    base_price_per_night: Decimal
+    amenities: list[str] | None
+    status: str  # Room status: 'active' or 'maintenance'
+    is_available: bool
+    total_price: float | None  # None if unavailable
+    blocking_bookings: list[BlockingBookingInfo]

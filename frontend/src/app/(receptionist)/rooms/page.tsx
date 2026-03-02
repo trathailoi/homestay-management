@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import api, { type ApiResponse } from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import type { Room, PaginationMeta } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,7 @@ export default function RoomsPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const { t } = useTranslation();
 
   const fetchRooms = useCallback(async () => {
     setLoading(true);
@@ -69,34 +71,34 @@ export default function RoomsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Rooms</h1>
-        <Button onClick={() => setCreateDialogOpen(true)}>Add Room</Button>
+        <h1 className="text-2xl font-bold">{t("rooms.title")}</h1>
+        <Button onClick={() => setCreateDialogOpen(true)}>{t("rooms.addRoom")}</Button>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Room #</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead className="text-center">Capacity</TableHead>
-              <TableHead className="text-right">Price/Night</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{t("rooms.roomNumber")}</TableHead>
+              <TableHead>{t("common.name")}</TableHead>
+              <TableHead>{t("common.type")}</TableHead>
+              <TableHead className="text-center">{t("rooms.capacity")}</TableHead>
+              <TableHead className="text-right">{t("rooms.pricePerNight")}</TableHead>
+              <TableHead>{t("common.status")}</TableHead>
+              <TableHead>{t("common.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  Loading...
+                  {t("common.loading")}
                 </TableCell>
               </TableRow>
             ) : rooms.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No rooms found
+                  {t("rooms.noRooms")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -118,7 +120,7 @@ export default function RoomsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={room.status === "active" ? "default" : "secondary"}>
-                      {room.status}
+                      {room.status === "active" ? t("rooms.active") : t("rooms.maintenanceStatus")}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -128,7 +130,7 @@ export default function RoomsPage() {
                       disabled={actionLoading === room.id}
                       onClick={() => handleToggleStatus(room)}
                     >
-                      {room.status === "active" ? "Lock" : "Unlock"}
+                      {room.status === "active" ? t("rooms.lock") : t("rooms.unlock")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -141,8 +143,12 @@ export default function RoomsPage() {
       {meta && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Showing {(page - 1) * meta.per_page + 1} to{" "}
-            {Math.min(page * meta.per_page, meta.total)} of {meta.total} rooms
+            {t("common.showing", {
+              from: (page - 1) * meta.per_page + 1,
+              to: Math.min(page * meta.per_page, meta.total),
+              total: meta.total,
+              item: t("nav.rooms").toLowerCase(),
+            })}
           </div>
           <div className="flex gap-2">
             <Button
@@ -151,7 +157,7 @@ export default function RoomsPage() {
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
             >
-              Previous
+              {t("common.previous")}
             </Button>
             <Button
               variant="outline"
@@ -159,7 +165,7 @@ export default function RoomsPage() {
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
             >
-              Next
+              {t("common.next")}
             </Button>
           </div>
         </div>

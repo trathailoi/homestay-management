@@ -3,7 +3,9 @@
 from app.schemas.availability import (
     AvailabilityQuery,
     AvailableRoom,
+    BlockingBookingInfo,
     RoomAvailabilityDay,
+    RoomAvailabilityOverview,
 )
 from app.schemas.booking import (
     BookingCreate,
@@ -43,5 +45,7 @@ __all__ = [
     # Availability
     "AvailabilityQuery",
     "AvailableRoom",
+    "BlockingBookingInfo",
     "RoomAvailabilityDay",
+    "RoomAvailabilityOverview",
 ]

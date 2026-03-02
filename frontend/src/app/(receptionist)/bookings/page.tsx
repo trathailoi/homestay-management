@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import api, { type ApiResponse } from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import type { Booking, PaginationMeta } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,15 +26,6 @@ import { Badge } from "@/components/ui/badge";
 
 type BookingStatus = Booking["status"];
 
-const STATUS_OPTIONS: { value: string; label: string }[] = [
-  { value: "all", label: "All Statuses" },
-  { value: "pending", label: "Pending" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "checked_in", label: "Checked In" },
-  { value: "checked_out", label: "Checked Out" },
-  { value: "cancelled", label: "Cancelled" },
-];
-
 function getStatusVariant(status: BookingStatus): "default" | "secondary" | "destructive" {
   switch (status) {
     case "confirmed":
@@ -46,14 +38,6 @@ function getStatusVariant(status: BookingStatus): "default" | "secondary" | "des
     default:
       return "secondary";
   }
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 function formatCurrency(amount: string): string {
@@ -69,6 +53,35 @@ export default function BookingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+  const { t, dateLocale } = useTranslation();
+
+  const STATUS_OPTIONS: { value: string; label: string }[] = [
+    { value: "all", label: t("bookings.allStatuses") },
+    { value: "pending", label: t("bookings.pending") },
+    { value: "confirmed", label: t("bookings.confirmed") },
+    { value: "checked_in", label: t("bookings.checkedIn") },
+    { value: "checked_out", label: t("bookings.checkedOut") },
+    { value: "cancelled", label: t("bookings.cancelled") },
+  ];
+
+  function formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString(dateLocale, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  function getStatusLabel(status: BookingStatus): string {
+    const map: Record<string, string> = {
+      pending: t("bookings.pending"),
+      confirmed: t("bookings.confirmed"),
+      checked_in: t("bookings.checkedIn"),
+      checked_out: t("bookings.checkedOut"),
+      cancelled: t("bookings.cancelled"),
+    };
+    return map[status] || status;
+  }
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -127,24 +140,24 @@ export default function BookingsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Bookings</h1>
+        <h1 className="text-2xl font-bold">{t("bookings.title")}</h1>
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <form onSubmit={handleSearch} className="flex gap-2 flex-1 max-w-md">
           <Input
-            placeholder="Search by guest name or phone..."
+            placeholder={t("bookings.searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
           <Button type="submit" variant="secondary">
-            Search
+            {t("common.search")}
           </Button>
         </form>
 
         <Select value={statusFilter} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-44">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t("bookings.filterByStatus")} />
           </SelectTrigger>
           <SelectContent>
             {STATUS_OPTIONS.map((option) => (
@@ -160,26 +173,26 @@ export default function BookingsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Guest</TableHead>
-              <TableHead>Room</TableHead>
-              <TableHead>Check-in</TableHead>
-              <TableHead>Check-out</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{t("bookings.guestCol")}</TableHead>
+              <TableHead>{t("bookings.roomCol")}</TableHead>
+              <TableHead>{t("bookings.checkInCol")}</TableHead>
+              <TableHead>{t("bookings.checkOutCol")}</TableHead>
+              <TableHead>{t("common.status")}</TableHead>
+              <TableHead className="text-right">{t("bookings.amountCol")}</TableHead>
+              <TableHead>{t("common.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  Loading...
+                  {t("common.loading")}
                 </TableCell>
               </TableRow>
             ) : bookings.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No bookings found
+                  {t("bookings.noBookings")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -199,7 +212,7 @@ export default function BookingsPage() {
                   <TableCell>{formatDate(booking.check_out_date)}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusVariant(booking.status)}>
-                      {booking.status.replace("_", " ")}
+                      {getStatusLabel(booking.status)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">{formatCurrency(booking.total_amount)}</TableCell>
@@ -213,7 +226,7 @@ export default function BookingsPage() {
                             disabled={actionLoading === booking.id}
                             onClick={() => handleAction(booking.id, "confirm")}
                           >
-                            Confirm
+                            {t("common.confirm")}
                           </Button>
                           <Button
                             size="sm"
@@ -221,7 +234,7 @@ export default function BookingsPage() {
                             disabled={actionLoading === booking.id}
                             onClick={() => handleAction(booking.id, "cancel")}
                           >
-                            Reject
+                            {t("dashboard.reject")}
                           </Button>
                         </>
                       )}
@@ -232,7 +245,7 @@ export default function BookingsPage() {
                           disabled={actionLoading === booking.id}
                           onClick={() => handleAction(booking.id, "check-in")}
                         >
-                          Check In
+                          {t("bookings.checkInAction")}
                         </Button>
                       )}
                       {booking.status === "checked_in" && (
@@ -242,7 +255,7 @@ export default function BookingsPage() {
                           disabled={actionLoading === booking.id}
                           onClick={() => handleAction(booking.id, "check-out")}
                         >
-                          Check Out
+                          {t("bookings.checkOutAction")}
                         </Button>
                       )}
                     </div>
@@ -257,8 +270,12 @@ export default function BookingsPage() {
       {meta && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Showing {(page - 1) * meta.per_page + 1} to{" "}
-            {Math.min(page * meta.per_page, meta.total)} of {meta.total} bookings
+            {t("common.showing", {
+              from: (page - 1) * meta.per_page + 1,
+              to: Math.min(page * meta.per_page, meta.total),
+              total: meta.total,
+              item: t("bookings.title").toLowerCase(),
+            })}
           </div>
           <div className="flex gap-2">
             <Button
@@ -267,7 +284,7 @@ export default function BookingsPage() {
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
             >
-              Previous
+              {t("common.previous")}
             </Button>
             <Button
               variant="outline"
@@ -275,7 +292,7 @@ export default function BookingsPage() {
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
             >
-              Next
+              {t("common.next")}
             </Button>
           </div>
         </div>

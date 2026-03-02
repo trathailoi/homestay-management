@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import type { AvailableRoom } from "@/lib/types";
 
 export default function GuestSearchPage() {
@@ -18,8 +19,8 @@ export default function GuestSearchPage() {
   const [rooms, setRooms] = useState<AvailableRoom[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
-  // Get today's date in YYYY-MM-DD format for min date
   const today = new Date().toISOString().split("T")[0];
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -39,7 +40,7 @@ export default function GuestSearchPage() {
       setRooms(response.data);
     } catch (err) {
       console.error("Search failed:", err);
-      setError("Failed to search. Please check your dates and try again.");
+      setError(t("guest.searchFailed"));
       setRooms(null);
     } finally {
       setLoading(false);
@@ -60,13 +61,13 @@ export default function GuestSearchPage() {
       {/* Search Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Search Available Rooms</CardTitle>
+          <CardTitle>{t("guest.searchTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="check-in">Check-in Date</Label>
+                <Label htmlFor="check-in">{t("guest.checkInDate")}</Label>
                 <Input
                   id="check-in"
                   type="date"
@@ -77,7 +78,7 @@ export default function GuestSearchPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="check-out">Check-out Date</Label>
+                <Label htmlFor="check-out">{t("guest.checkOutDate")}</Label>
                 <Input
                   id="check-out"
                   type="date"
@@ -88,7 +89,7 @@ export default function GuestSearchPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="guests">Number of Guests</Label>
+                <Label htmlFor="guests">{t("guest.numberOfGuests")}</Label>
                 <Input
                   id="guests"
                   type="number"
@@ -101,7 +102,7 @@ export default function GuestSearchPage() {
               </div>
             </div>
             <Button type="submit" disabled={loading} className="w-full md:w-auto">
-              {loading ? "Searching..." : "Search Rooms"}
+              {loading ? t("guest.searching") : t("guest.searchRooms")}
             </Button>
           </form>
         </CardContent>
@@ -109,9 +110,9 @@ export default function GuestSearchPage() {
 
       {/* Error State */}
       {error && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
           <CardContent className="pt-6">
-            <p className="text-red-700 text-center">{error}</p>
+            <p className="text-red-700 dark:text-red-400 text-center">{error}</p>
           </CardContent>
         </Card>
       )}
@@ -121,16 +122,15 @@ export default function GuestSearchPage() {
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">
             {rooms.length > 0
-              ? `${rooms.length} Room${rooms.length !== 1 ? "s" : ""} Available`
-              : "No Rooms Available"}
+              ? t("guest.roomsAvailable", { count: rooms.length })
+              : t("guest.noRoomsAvailable")}
           </h2>
 
           {rooms.length === 0 ? (
             <Card>
               <CardContent className="pt-6">
-                <p className="text-slate-600 text-center">
-                  No rooms available for these dates. Please try different dates
-                  or fewer guests.
+                <p className="text-slate-600 dark:text-slate-400 text-center">
+                  {t("guest.noRoomsMessage")}
                 </p>
               </CardContent>
             </Card>
@@ -145,10 +145,9 @@ export default function GuestSearchPage() {
                           <h3 className="text-lg font-semibold">{room.name}</h3>
                           <Badge variant="secondary">{room.room_type}</Badge>
                         </div>
-                        <p className="text-sm text-slate-600">
-                          Room {room.room_number} &bull; Up to{" "}
-                          {room.max_occupancy} guest
-                          {room.max_occupancy !== 1 ? "s" : ""}
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          {t("common.room")} {room.room_number} &bull;{" "}
+                          {t("guest.upToGuests", { count: room.max_occupancy })}
                         </p>
                         {room.amenities.length > 0 && (
                           <div className="flex flex-wrap gap-1">
@@ -166,17 +165,17 @@ export default function GuestSearchPage() {
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <div className="text-right">
-                          <p className="text-sm text-slate-500">
+                          <p className="text-sm text-slate-500 dark:text-slate-400">
                             ${parseFloat(room.base_price_per_night).toFixed(2)}{" "}
-                            / night
+                            {t("guest.perNight")}
                           </p>
-                          <p className="text-2xl font-bold text-slate-900">
+                          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                             ${parseFloat(room.total_price).toFixed(2)}
                           </p>
-                          <p className="text-xs text-slate-500">total</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{t("guest.totalLabel")}</p>
                         </div>
                         <Button onClick={() => handleRequestBooking(room.id)}>
-                          Request Booking
+                          {t("guest.requestBooking")}
                         </Button>
                       </div>
                     </div>

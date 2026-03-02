@@ -57,6 +57,29 @@ export interface RoomAvailabilityDay {
   booking_id: string | null;
 }
 
+export interface BlockingBookingInfo {
+  id: string;
+  guest_name: string;
+  guest_phone: string;
+  check_in_date: string;
+  check_out_date: string;
+  status: string;
+}
+
+export interface RoomAvailabilityOverview {
+  id: string;
+  room_number: string;
+  room_type: string;
+  name: string;
+  max_occupancy: number;
+  base_price_per_night: string;
+  amenities: string[] | null;
+  status: string;
+  is_available: boolean;
+  total_price: number | null;
+  blocking_bookings: BlockingBookingInfo[];
+}
+
 export interface User {
   id: string;
   username: string;

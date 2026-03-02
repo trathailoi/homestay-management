@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_session
 from app.schemas import SuccessResponse
-from app.schemas.availability import AvailableRoom, RoomAvailabilityDay
+from app.schemas.availability import AvailableRoom, RoomAvailabilityDay, RoomAvailabilityOverview
 from app.services import AvailabilityService
 
 router = APIRouter(prefix="/availability", tags=["availability"])
@@ -26,6 +26,21 @@ async def check_availability(
     rooms = await service.check_availability(check_in, check_out, guests)
     return SuccessResponse(
         data=[AvailableRoom.model_validate(r) for r in rooms]
+    )
+
+
+@router.get("/overview")
+async def availability_overview(
+    check_in: date = Query(..., description="Check-in date"),
+    check_out: date = Query(..., description="Check-out date"),
+    guests: int = Query(0, ge=0, description="Min guests (0 = no filter)"),
+    session: AsyncSession = Depends(get_session),
+) -> SuccessResponse[list[RoomAvailabilityOverview]]:
+    """Get availability overview of all rooms for a date range (receptionist view)."""
+    service = AvailabilityService(session)
+    rooms = await service.check_all_rooms_availability(check_in, check_out, guests)
+    return SuccessResponse(
+        data=[RoomAvailabilityOverview.model_validate(r) for r in rooms]
     )
 
 

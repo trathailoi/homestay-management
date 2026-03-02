@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import api, { type ApiResponse } from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import type { Room } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ export default function RoomDetailPage() {
   const params = useParams();
   const router = useRouter();
   const roomId = params.id as string;
+  const { t } = useTranslation();
 
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +56,7 @@ export default function RoomDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Loading room...</p>
+        <p className="text-muted-foreground">{t("rooms.loadingRoom")}</p>
       </div>
     );
   }
@@ -62,11 +64,11 @@ export default function RoomDetailPage() {
   if (!room) {
     return (
       <div className="p-6">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
           <CardContent className="pt-6">
-            <p className="text-red-700">Room not found</p>
+            <p className="text-red-700 dark:text-red-400">{t("rooms.roomNotFound")}</p>
             <Button onClick={() => router.push("/rooms")} className="mt-4" variant="outline">
-              Back to Rooms
+              {t("rooms.backToRooms")}
             </Button>
           </CardContent>
         </Card>
@@ -79,11 +81,11 @@ export default function RoomDetailPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/rooms")}>
-            &larr; Back
+            &larr; {t("common.back")}
           </Button>
-          <h1 className="text-2xl font-bold">Room {room.room_number}</h1>
+          <h1 className="text-2xl font-bold">{t("common.room")} {room.room_number}</h1>
           <Badge variant={room.status === "active" ? "default" : "secondary"}>
-            {room.status}
+            {room.status === "active" ? t("rooms.active") : t("rooms.maintenanceStatus")}
           </Badge>
         </div>
         <Button
@@ -94,8 +96,8 @@ export default function RoomDetailPage() {
           {actionLoading
             ? "..."
             : room.status === "active"
-            ? "Lock for Maintenance"
-            : "Unlock Room"}
+            ? t("rooms.lockForMaintenance")
+            : t("rooms.unlockRoom")}
         </Button>
       </div>
 
@@ -109,27 +111,27 @@ export default function RoomDetailPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">Max Occupancy</p>
+                <p className="text-sm text-muted-foreground">{t("rooms.maxOccupancy")}</p>
                 <p className="font-medium">
-                  {room.max_occupancy} {room.max_occupancy === 1 ? "guest" : "guests"}
+                  {room.max_occupancy} {room.max_occupancy === 1 ? t("common.guest") : t("common.guests")}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Price per Night</p>
+                <p className="text-sm text-muted-foreground">{t("rooms.pricePerNightLabel")}</p>
                 <p className="font-medium">{formatCurrency(room.base_price_per_night)}</p>
               </div>
             </div>
 
             {room.description && (
               <div>
-                <p className="text-sm text-muted-foreground">Description</p>
+                <p className="text-sm text-muted-foreground">{t("common.description")}</p>
                 <p className="text-sm mt-1">{room.description}</p>
               </div>
             )}
 
             {room.amenities && room.amenities.length > 0 && (
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Amenities</p>
+                <p className="text-sm text-muted-foreground mb-2">{t("rooms.amenities")}</p>
                 <div className="flex flex-wrap gap-2">
                   {room.amenities.map((amenity, index) => (
                     <Badge key={index} variant="outline">
@@ -145,8 +147,8 @@ export default function RoomDetailPage() {
         {/* Availability Calendar */}
         <Card>
           <CardHeader>
-            <CardTitle>Availability Calendar</CardTitle>
-            <CardDescription>Click on booked days to view the booking</CardDescription>
+            <CardTitle>{t("rooms.availabilityCalendar")}</CardTitle>
+            <CardDescription>{t("rooms.clickBookedDays")}</CardDescription>
           </CardHeader>
           <CardContent>
             <RoomCalendar roomId={roomId} roomStatus={room.status} />

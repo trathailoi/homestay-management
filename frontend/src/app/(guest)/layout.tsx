@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { GuestHeader } from "@/components/guest-header";
+import { GuestFooter } from "@/components/guest-footer";
 
 export const metadata: Metadata = {
   title: "Homestay - Find Your Perfect Room",
@@ -11,21 +13,10 @@ export default function GuestLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-slate-900">Homestay</h1>
-          <p className="text-sm text-slate-600">
-            Find and book your perfect room
-          </p>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      <GuestHeader />
       <main className="max-w-4xl mx-auto px-4 py-8">{children}</main>
-      <footer className="border-t mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
-          <p>Welcome to our homestay. We look forward to hosting you.</p>
-        </div>
-      </footer>
+      <GuestFooter />
     </div>
   );
 }

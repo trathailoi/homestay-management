@@ -8,7 +8,7 @@ export default function ReceptionistLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="flex h-screen bg-slate-50">
+      <div className="flex h-screen bg-slate-50 dark:bg-slate-950">
         <NavSidebar />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>

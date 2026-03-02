@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { api, ApiError } from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import type { Booking, Room } from "@/lib/types";
 
 interface DashboardData {
@@ -34,6 +35,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const fetchData = async () => {
     try {
@@ -54,11 +56,9 @@ export default function DashboardPage() {
       const pending = pendingRes.data;
       const rooms = roomsRes.data;
 
-      // Split checked-in bookings into departures today vs overdue
       const departures = checkedIn.filter((b) => b.check_out_date === today);
       const overdue = checkedIn.filter((b) => b.check_out_date < today);
 
-      // Count rooms
       const activeRooms = rooms.filter((r) => r.status === "active");
       const maintenanceCount = rooms.filter((r) => r.status === "maintenance").length;
       const occupiedCount = checkedIn.length;
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       });
     } catch (err) {
       console.error("Failed to load dashboard:", err);
-      setError("Unable to load dashboard. Is the server running?");
+      setError(t("dashboard.loadError"));
     } finally {
       setLoading(false);
     }
@@ -141,7 +141,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-slate-500">Loading dashboard...</p>
+        <p className="text-slate-500 dark:text-slate-400">{t("dashboard.loadingDashboard")}</p>
       </div>
     );
   }
@@ -149,11 +149,11 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="p-6">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
           <CardContent className="pt-6">
-            <p className="text-red-700">{error}</p>
+            <p className="text-red-700 dark:text-red-400">{error}</p>
             <Button onClick={fetchData} className="mt-4" variant="outline">
-              Retry
+              {t("common.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -165,14 +165,14 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Today&apos;s Dashboard</h1>
+      <h1 className="text-2xl font-bold">{t("dashboard.title")}</h1>
 
       {/* Occupancy Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">
-              Occupied
+            <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {t("dashboard.occupied")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -183,8 +183,8 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">
-              Maintenance
+            <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {t("dashboard.maintenance")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -193,8 +193,8 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-500">
-              Pending Requests
+            <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              {t("dashboard.pendingRequests")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -202,14 +202,14 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         {data.overdue.length > 0 && (
-          <Card className="border-orange-200 bg-orange-50">
+          <Card className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-orange-600">
-                Overdue
+              <CardTitle className="text-sm font-medium text-orange-600 dark:text-orange-400">
+                {t("dashboard.overdue")}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-orange-700">
+              <p className="text-2xl font-bold text-orange-700 dark:text-orange-400">
                 {data.overdue.length}
               </p>
             </CardContent>
@@ -222,25 +222,25 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Arrivals Today
+              {t("dashboard.arrivalsToday")}
               <Badge variant="secondary">{data.arrivals.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {data.arrivals.length === 0 ? (
-              <p className="text-slate-500 text-sm">No arrivals today</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("dashboard.noArrivals")}</p>
             ) : (
               <div className="space-y-3">
                 {data.arrivals.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
-                      <p className="text-sm text-slate-500">
-                        Room {booking.room_number} &bull; {booking.num_guests} guest
-                        {booking.num_guests !== 1 ? "s" : ""}
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {t("common.room")} {booking.room_number} &bull; {booking.num_guests}{" "}
+                        {booking.num_guests !== 1 ? t("common.guests") : t("common.guest")}
                       </p>
                     </div>
                     <Button
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                       disabled={actionLoading === booking.id}
                       onClick={() => handleCheckIn(booking.id)}
                     >
-                      {actionLoading === booking.id ? "..." : "Check In"}
+                      {actionLoading === booking.id ? "..." : t("dashboard.checkIn")}
                     </Button>
                   </div>
                 ))}
@@ -261,24 +261,24 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Departures Today
+              {t("dashboard.departuresToday")}
               <Badge variant="secondary">{data.departures.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {data.departures.length === 0 ? (
-              <p className="text-slate-500 text-sm">No departures today</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("dashboard.noDepartures")}</p>
             ) : (
               <div className="space-y-3">
                 {data.departures.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
-                      <p className="text-sm text-slate-500">
-                        Room {booking.room_number}
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {t("common.room")} {booking.room_number}
                       </p>
                     </div>
                     <Button
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                       disabled={actionLoading === booking.id}
                       onClick={() => handleCheckOut(booking.id)}
                     >
-                      {actionLoading === booking.id ? "..." : "Check Out"}
+                      {actionLoading === booking.id ? "..." : t("dashboard.checkOut")}
                     </Button>
                   </div>
                 ))}
@@ -298,10 +298,10 @@ export default function DashboardPage() {
 
         {/* Overdue Check-outs */}
         {data.overdue.length > 0 && (
-          <Card className="border-orange-200 md:col-span-2">
+          <Card className="border-orange-200 dark:border-orange-800 md:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-700">
-                Overdue Check-outs
+              <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
+                {t("dashboard.overdueCheckouts")}
                 <Badge variant="destructive">{data.overdue.length}</Badge>
               </CardTitle>
             </CardHeader>
@@ -310,17 +310,17 @@ export default function DashboardPage() {
                 {data.overdue.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200"
+                    className="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-950 rounded-lg border border-orange-200 dark:border-orange-800"
                   >
                     <div>
                       <p className="font-medium">{booking.guest_name}</p>
-                      <p className="text-sm text-slate-600">
-                        Room {booking.room_number}
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {t("common.room")} {booking.room_number}
                       </p>
                       <Badge variant="destructive" className="mt-1">
-                        {getDaysOverdue(booking.check_out_date)} day
-                        {getDaysOverdue(booking.check_out_date) !== 1 ? "s" : ""}{" "}
-                        overdue
+                        {t("dashboard.daysOverdue", {
+                          days: getDaysOverdue(booking.check_out_date),
+                        })}
                       </Badge>
                     </div>
                     <Button
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                       disabled={actionLoading === booking.id}
                       onClick={() => handleCheckOut(booking.id)}
                     >
-                      {actionLoading === booking.id ? "..." : "Check Out"}
+                      {actionLoading === booking.id ? "..." : t("dashboard.checkOut")}
                     </Button>
                   </div>
                 ))}
@@ -341,27 +341,27 @@ export default function DashboardPage() {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Pending Booking Requests
+              {t("dashboard.pendingBookingRequests")}
               <Badge variant="secondary">{data.pending.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {data.pending.length === 0 ? (
-              <p className="text-slate-500 text-sm">No pending requests</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{t("dashboard.noPending")}</p>
             ) : (
               <div className="space-y-3">
                 {data.pending.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
                   >
                     <div className="flex-1">
                       <p className="font-medium">{booking.guest_name}</p>
-                      <p className="text-sm text-slate-500">
-                        Room {booking.room_number} &bull; {booking.check_in_date} to{" "}
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {t("common.room")} {booking.room_number} &bull; {booking.check_in_date} to{" "}
                         {booking.check_out_date}
                       </p>
-                      <p className="text-sm font-medium text-slate-700">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         ${parseFloat(booking.total_amount).toFixed(2)}
                       </p>
                     </div>
@@ -371,7 +371,7 @@ export default function DashboardPage() {
                         disabled={actionLoading === booking.id}
                         onClick={() => handleConfirm(booking.id)}
                       >
-                        {actionLoading === booking.id ? "..." : "Confirm"}
+                        {actionLoading === booking.id ? "..." : t("common.confirm")}
                       </Button>
                       <Button
                         size="sm"
@@ -379,7 +379,7 @@ export default function DashboardPage() {
                         disabled={actionLoading === booking.id}
                         onClick={() => handleReject(booking.id)}
                       >
-                        Reject
+                        {t("dashboard.reject")}
                       </Button>
                     </div>
                   </div>

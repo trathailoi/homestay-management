@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import api from "@/lib/api";
+import { useTranslation } from "@/lib/language-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +25,7 @@ interface CreateRoomDialogProps {
 export function CreateRoomDialog({ open, onOpenChange, onCreated }: CreateRoomDialogProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const [roomNumber, setRoomNumber] = useState("");
   const [roomType, setRoomType] = useState("");
@@ -69,7 +71,7 @@ export function CreateRoomDialog({ open, onOpenChange, onCreated }: CreateRoomDi
       onOpenChange(false);
       onCreated();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create room");
+      setError(err instanceof Error ? err.message : t("createRoom.createFailed"));
     } finally {
       setLoading(false);
     }
@@ -79,72 +81,72 @@ export function CreateRoomDialog({ open, onOpenChange, onCreated }: CreateRoomDi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Room</DialogTitle>
+          <DialogTitle>{t("createRoom.title")}</DialogTitle>
           <DialogDescription>
-            Create a new room for your homestay. Fill in the details below.
+            {t("createRoom.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="roomNumber">Room Number</Label>
+              <Label htmlFor="roomNumber">{t("createRoom.roomNumber")}</Label>
               <Input
                 id="roomNumber"
                 value={roomNumber}
                 onChange={(e) => setRoomNumber(e.target.value)}
-                placeholder="e.g., 101"
+                placeholder={t("createRoom.roomNumberPlaceholder")}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="roomType">Room Type</Label>
+              <Label htmlFor="roomType">{t("createRoom.roomType")}</Label>
               <Input
                 id="roomType"
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
-                placeholder="e.g., deluxe"
+                placeholder={t("createRoom.roomTypePlaceholder")}
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t("createRoom.name")}</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Ocean View Suite"
+              placeholder={t("createRoom.namePlaceholder")}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t("createRoom.description_field")}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Room description (optional)"
+              placeholder={t("createRoom.descriptionPlaceholder")}
               rows={3}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="maxOccupancy">Max Occupancy</Label>
+              <Label htmlFor="maxOccupancy">{t("createRoom.maxOccupancy")}</Label>
               <Input
                 id="maxOccupancy"
                 type="number"
                 min="1"
                 value={maxOccupancy}
                 onChange={(e) => setMaxOccupancy(e.target.value)}
-                placeholder="e.g., 2"
+                placeholder={t("createRoom.maxOccupancyPlaceholder")}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="basePricePerNight">Price/Night ($)</Label>
+              <Label htmlFor="basePricePerNight">{t("createRoom.pricePerNight")}</Label>
               <Input
                 id="basePricePerNight"
                 type="number"
@@ -152,34 +154,34 @@ export function CreateRoomDialog({ open, onOpenChange, onCreated }: CreateRoomDi
                 step="0.01"
                 value={basePricePerNight}
                 onChange={(e) => setBasePricePerNight(e.target.value)}
-                placeholder="e.g., 99.00"
+                placeholder={t("createRoom.pricePerNightPlaceholder")}
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amenities">Amenities</Label>
+            <Label htmlFor="amenities">{t("createRoom.amenities")}</Label>
             <Input
               id="amenities"
               value={amenities}
               onChange={(e) => setAmenities(e.target.value)}
-              placeholder="e.g., WiFi, AC, TV (comma-separated)"
+              placeholder={t("createRoom.amenitiesPlaceholder")}
             />
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+            <div className="rounded-md bg-red-50 dark:bg-red-950 p-3 text-sm text-red-600 dark:text-red-400">
               {error}
             </div>
           )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Room"}
+              {loading ? t("createRoom.creating") : t("createRoom.createRoom")}
             </Button>
           </DialogFooter>
         </form>
