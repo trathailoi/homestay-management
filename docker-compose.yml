@@ -6,8 +6,7 @@ services:
       POSTGRES_DB: homestay
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432"
+    # ports not exposed: only backend (same docker network) needs the db
     volumes:
       - homestay-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -19,8 +18,7 @@ services:
   backend:
     build: .
     container_name: homestay-backend
-    ports:
-      - "8000:8000"
+    # ports not exposed: frontend proxies to it over the docker network
     environment:
       HOMESTAY_DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/homestay
       HOMESTAY_DATABASE_URL_SYNC: postgresql://postgres:postgres@db:5432/homestay
