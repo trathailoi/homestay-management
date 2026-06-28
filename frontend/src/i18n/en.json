@@ -23,7 +23,6 @@
   "common.room": "Room",
   "common.perNight": "/night",
   "common.showing": "Showing {from} to {to} of {total} {item}",
-
   "nav.homestay": "Homestay",
   "nav.managementDashboard": "Management Dashboard",
   "nav.dashboard": "Dashboard",
@@ -32,7 +31,6 @@
   "nav.availability": "Availability",
   "nav.signedInAs": "Signed in as",
   "nav.signOut": "Sign out",
-
   "login.welcomeBack": "Welcome Back",
   "login.signInDescription": "Sign in to access the receptionist dashboard",
   "login.username": "Username",
@@ -42,7 +40,6 @@
   "login.signIn": "Sign In",
   "login.signingIn": "Signing in...",
   "login.unexpectedError": "An unexpected error occurred. Please try again.",
-
   "dashboard.title": "Today's Dashboard",
   "dashboard.occupied": "Occupied",
   "dashboard.maintenance": "Maintenance",
@@ -61,7 +58,6 @@
   "dashboard.reject": "Reject",
   "dashboard.loadingDashboard": "Loading dashboard...",
   "dashboard.loadError": "Unable to load dashboard. Is the server running?",
-
   "rooms.title": "Rooms",
   "rooms.addRoom": "Add Room",
   "rooms.roomNumber": "Room #",
@@ -82,7 +78,6 @@
   "rooms.amenities": "Amenities",
   "rooms.availabilityCalendar": "Availability Calendar",
   "rooms.clickBookedDays": "Click on booked days to view the booking",
-
   "createRoom.title": "Add New Room",
   "createRoom.description": "Create a new room for your homestay. Fill in the details below.",
   "createRoom.roomNumber": "Room Number",
@@ -102,7 +97,6 @@
   "createRoom.createFailed": "Failed to create room",
   "createRoom.creating": "Creating...",
   "createRoom.createRoom": "Create Room",
-
   "calendar.prev": "Prev",
   "calendar.next": "Next",
   "calendar.available": "Available",
@@ -110,8 +104,15 @@
   "calendar.maintenance": "Maintenance",
   "calendar.clickToViewBooking": "Click to view booking",
   "calendar.roomInMaintenance": "Room in maintenance",
-  "calendar.weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-
+  "calendar.weekdays": [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+  ],
   "bookings.title": "Bookings",
   "bookings.searchPlaceholder": "Search by guest name or phone...",
   "bookings.filterByStatus": "Filter by status",
@@ -129,7 +130,6 @@
   "bookings.noBookings": "No bookings found",
   "bookings.checkInAction": "Check In",
   "bookings.checkOutAction": "Check Out",
-
   "bookingDetail.title": "Booking Details",
   "bookingDetail.bookingInfo": "Booking Information",
   "bookingDetail.guestName": "Guest Name",
@@ -168,7 +168,6 @@
   "bookingDetail.loadingBooking": "Loading booking...",
   "bookingDetail.bookingNotFound": "Booking not found",
   "bookingDetail.backToBookings": "Back to Bookings",
-
   "availability.title": "Check Availability",
   "availability.checkIn": "Check-in",
   "availability.checkOut": "Check-out",
@@ -183,7 +182,6 @@
   "availability.viewBooking": "View booking",
   "availability.upToGuests": "Up to {count} guests",
   "availability.checkOutAfterCheckIn": "Check-out must be after check-in",
-
   "guest.homestay": "Homestay",
   "guest.findRoom": "Find and book your perfect room",
   "guest.welcome": "Welcome to our homestay. We look forward to hosting you.",
@@ -201,7 +199,6 @@
   "guest.totalLabel": "total",
   "guest.requestBooking": "Request Booking",
   "guest.searchFailed": "Failed to search. Please check your dates and try again.",
-
   "guestBooking.title": "Request Booking",
   "guestBooking.subtitle": "Fill in your details to request this room",
   "guestBooking.checkIn": "Check-in:",
@@ -224,6 +221,23 @@
   "guestBooking.totalAmount": "Total Amount:",
   "guestBooking.confirmMessage": "The homestay will review and confirm your request shortly. Please save your booking reference for future communications.",
   "guestBooking.searchMore": "Search More Rooms",
-
-  "authGuard.loading": "Loading..."
+  "authGuard.loading": "Loading...",
+  "guest.heroTagline": "A peaceful seaside homestay in Ninh Vân village",
+  "guest.bookNow": "Book now",
+  "guest.galleryTitle": "Inside View Biển",
+  "guest.galleryEmpty": "Photos coming soon",
+  "guest.roomsTitle": "Our rooms",
+  "guest.roomsIntro": "Pick a room and check availability for your dates",
+  "guest.browseAll": "All rooms",
+  "guest.checkAvailability": "Check availability",
+  "guest.clearDates": "Clear dates",
+  "guest.fromPrice": "from",
+  "guest.loadFailed": "Couldn’t load rooms. Please try again.",
+  "guest.retry": "Retry",
+  "guest.locationTitle": "Location",
+  "guest.address": "View Biển Homestay, Ninh Vân, Ninh Hòa, Khánh Hòa",
+  "guest.gettingThere": "About 30 minutes from central Nha Trang. Contact us for boat or road directions.",
+  "guest.openInMaps": "Open in Google Maps",
+  "guest.reviewsTitle": "What guests say",
+  "guest.viewOnGoogle": "See all reviews on Google"
 }
