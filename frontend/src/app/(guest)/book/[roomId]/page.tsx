@@ -76,48 +76,52 @@ export default function BookingRequestPage() {
   // Confirmation view
   if (booking) {
     return (
-      <div className="max-w-md mx-auto">
-        <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+      <div className="mx-auto max-w-md px-4 py-12 md:py-16">
+        <Card className="rounded-2xl border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
           <CardHeader className="text-center">
-            <div className="text-4xl mb-4">&#10003;</div>
-            <CardTitle className="text-green-800 dark:text-green-200">{t("guestBooking.submitted")}</CardTitle>
+            <div className="mb-4 text-4xl">&#10003;</div>
+            <CardTitle className="font-display text-green-800 dark:text-green-200">
+              {t("guestBooking.submitted")}
+            </CardTitle>
             <CardDescription className="text-green-700 dark:text-green-300">
               {t("guestBooking.received")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-4 text-center">
-              <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{t("guestBooking.bookingReference")}</p>
-              <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-100">
+            <div className="rounded-xl bg-card p-4 text-center">
+              <p className="mb-1 text-sm text-muted-foreground">
+                {t("guestBooking.bookingReference")}
+              </p>
+              <p className="font-mono text-2xl font-bold">
                 {getBookingReference(booking.id)}
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {t("guestBooking.saveReference")}
               </p>
             </div>
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.checkIn")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.checkIn")}</span>
                 <span className="font-medium">{booking.check_in_date}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.checkOut")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.checkOut")}</span>
                 <span className="font-medium">{booking.check_out_date}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.guests")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.guests")}</span>
                 <span className="font-medium">{booking.num_guests}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.totalAmount")}</span>
-                <span className="font-medium">
+                <span className="text-muted-foreground">{t("guestBooking.totalAmount")}</span>
+                <span className="font-display font-bold text-brand-blue dark:text-white">
                   {formatVND(booking.total_amount)}
                 </span>
               </div>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-200">
+            <div className="rounded-xl bg-blue-50 p-4 text-sm text-blue-800 dark:bg-blue-950 dark:text-blue-200">
               <p>{t("guestBooking.confirmMessage")}</p>
             </div>
 
@@ -134,28 +138,26 @@ export default function BookingRequestPage() {
 
   // Form view
   return (
-    <div className="max-w-md mx-auto">
-      <Card>
+    <div className="mx-auto max-w-md px-4 py-12 md:py-16">
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle>{t("guestBooking.title")}</CardTitle>
-          <CardDescription>
-            {t("guestBooking.subtitle")}
-          </CardDescription>
+          <CardTitle className="font-display">{t("guestBooking.title")}</CardTitle>
+          <CardDescription>{t("guestBooking.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Read-only booking details */}
-            <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 space-y-2 text-sm">
+            <div className="space-y-2 rounded-xl bg-muted p-4 text-sm">
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.checkIn")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.checkIn")}</span>
                 <span className="font-medium">{checkIn}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.checkOut")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.checkOut")}</span>
                 <span className="font-medium">{checkOut}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.guests")}</span>
+                <span className="text-muted-foreground">{t("guestBooking.guests")}</span>
                 <span className="font-medium">{guests}</span>
               </div>
             </div>
@@ -200,7 +202,7 @@ export default function BookingRequestPage() {
 
             {/* Error message */}
             {error && (
-              <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+              <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -212,7 +214,11 @@ export default function BookingRequestPage() {
                   {t("guestBooking.back")}
                 </Button>
               </Link>
-              <Button type="submit" disabled={loading} className="flex-1">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-brand text-brand-foreground hover:brightness-110"
+              >
                 {loading ? t("guestBooking.submitting") : t("guestBooking.submitRequest")}
               </Button>
             </div>
