@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="View Biển — photo coming soon">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fd6e8"/>
+      <stop offset="0.55" stop-color="#1a8fb8"/>
+      <stop offset="1" stop-color="#003580"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sea)"/>
+  <circle cx="1060" cy="150" r="70" fill="#ffe9a8" opacity="0.9"/>
+  <path d="M0 560 Q320 500 640 560 T1280 560 V720 H0 Z" fill="#003580" opacity="0.35"/>
+  <text x="640" y="380" text-anchor="middle" font-family="Hanken Grotesk, Inter, sans-serif" font-size="56" font-weight="700" fill="#ffffff">View Biển</text>
+  <text x="640" y="440" text-anchor="middle" font-family="Inter, sans-serif" font-size="26" fill="#ffffff" opacity="0.85">Ảnh sắp được cập nhật</text>
+</svg>
