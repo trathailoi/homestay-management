@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import Link from "next/link";
 import api, { type ApiResponse } from "@/lib/api";
 import { useTranslation } from "@/lib/language-context";
@@ -18,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 
 function formatCurrency(amount: number | string): string {
-  return `$${parseFloat(String(amount)).toFixed(2)}`;
+  return formatVND(String(amount));
 }
 
 function tomorrow(): string {

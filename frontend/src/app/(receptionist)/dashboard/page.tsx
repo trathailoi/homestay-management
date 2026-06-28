@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -362,7 +363,7 @@ export default function DashboardPage() {
                         {booking.check_out_date}
                       </p>
                       <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        ${parseFloat(booking.total_amount).toFixed(2)}
+                        {formatVND(booking.total_amount)}
                       </p>
                     </div>
                     <div className="flex gap-2">

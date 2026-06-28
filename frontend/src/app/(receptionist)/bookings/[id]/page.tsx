@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import api, { ApiError, type ApiResponse } from "@/lib/api";
@@ -46,7 +47,7 @@ function getStatusVariant(status: BookingStatus): "default" | "secondary" | "des
 }
 
 function formatCurrency(amount: string): string {
-  return `$${parseFloat(amount).toFixed(2)}`;
+  return formatVND(amount);
 }
 
 export default function BookingDetailPage() {

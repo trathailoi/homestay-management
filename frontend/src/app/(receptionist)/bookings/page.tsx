@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import Link from "next/link";
 import api, { type ApiResponse } from "@/lib/api";
 import { useTranslation } from "@/lib/language-context";
@@ -41,7 +42,7 @@ function getStatusVariant(status: BookingStatus): "default" | "secondary" | "des
 }
 
 function formatCurrency(amount: string): string {
-  return `$${parseFloat(amount).toFixed(2)}`;
+  return formatVND(amount);
 }
 
 export default function BookingsPage() {

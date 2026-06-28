@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatVND } from "@/lib/utils";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -111,7 +112,7 @@ export default function BookingRequestPage() {
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-slate-400">{t("guestBooking.totalAmount")}</span>
                 <span className="font-medium">
-                  ${parseFloat(booking.total_amount).toFixed(2)}
+                  {formatVND(booking.total_amount)}
                 </span>
               </div>
             </div>

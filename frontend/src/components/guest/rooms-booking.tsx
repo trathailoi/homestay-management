@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useTranslation } from "@/lib/language-context";
@@ -305,7 +306,7 @@ function RoomCard({
             {totalPrice ? (
               <>
                 <p className="font-display text-xl font-bold">
-                  ${parseFloat(totalPrice).toFixed(2)}
+                  {formatVND(totalPrice)}
                 </p>
                 <p className="text-xs text-muted-foreground">{totalLabel}</p>
               </>
@@ -313,7 +314,7 @@ function RoomCard({
               <p className="text-sm text-muted-foreground">
                 {fromLabel}{" "}
                 <span className="font-display text-xl font-bold text-foreground">
-                  ${parseFloat(pricePerNight).toFixed(2)}
+                  {formatVND(pricePerNight)}
                 </span>{" "}
                 {perNightLabel}
               </p>

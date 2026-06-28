@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { formatVND } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import api, { type ApiResponse } from "@/lib/api";
 import { useTranslation } from "@/lib/language-context";
@@ -11,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { RoomCalendar } from "@/components/room-calendar";
 
 function formatCurrency(amount: string): string {
-  return `$${parseFloat(amount).toFixed(2)}`;
+  return formatVND(amount);
 }
 
 export default function RoomDetailPage() {
