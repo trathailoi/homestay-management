@@ -13,9 +13,9 @@ export default function GuestLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <div className="min-h-screen flex flex-col bg-background">
       <GuestHeader />
-      <main className="max-w-4xl mx-auto px-4 py-8">{children}</main>
+      <main className="flex-1">{children}</main>
       <GuestFooter />
     </div>
   );

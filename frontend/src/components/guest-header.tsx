@@ -1,23 +1,21 @@
 "use client";
 
-import { useTranslation } from "@/lib/language-context";
+import Link from "next/link";
+import { Waves } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 
 export function GuestHeader() {
-  const { t } = useTranslation();
-
   return (
-    <header className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-10">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100">
-            {t("guest.homestay")}
-          </h1>
-          <p className="hidden sm:block text-sm text-slate-600 dark:text-slate-400">
-            {t("guest.findRoom")}
-          </p>
-        </div>
+    <header className="sticky top-0 z-50 px-4 pt-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between rounded-full border border-black/5 bg-white/80 px-4 py-2 shadow-lg shadow-black/5 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/80">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-brand-blue dark:text-white"
+        >
+          <Waves className="size-5 text-brand" aria-hidden />
+          View Biển
+        </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <LanguageToggle />
