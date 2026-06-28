@@ -1,8 +1,11 @@
 "use client";
 
-import { ExternalLink, MapPin, Star } from "lucide-react";
+import { ExternalLink, MapPin, Phone, Star } from "lucide-react";
 import { useTranslation } from "@/lib/language-context";
 import { GOOGLE_MAPS_URL, MAP_EMBED_URL, reviews } from "@/lib/reviews";
+
+// Single homestay — host contact lives here rather than in a DB/contact model.
+const CONTACT_PHONE = "0355.329.669";
 
 export function LocationReviews() {
   const { t } = useTranslation();
@@ -39,6 +42,16 @@ export function LocationReviews() {
               {t("guest.openInMaps")}
               <ExternalLink className="size-3.5" aria-hidden />
             </a>
+            <div className="mt-4 border-t border-black/5 pt-4 dark:border-white/10">
+              <p className="font-medium">{t("guest.contactTitle")}</p>
+              <a
+                href={`tel:${CONTACT_PHONE.replace(/[\s.]/g, "")}`}
+                className="mt-1 inline-flex items-center gap-2 text-sm font-medium text-brand-indigo hover:underline"
+              >
+                <Phone className="size-4" aria-hidden />
+                {t("guest.contactHost")} — {CONTACT_PHONE}
+              </a>
+            </div>
           </div>
         </div>
       </div>
