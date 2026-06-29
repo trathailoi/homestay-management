@@ -28,6 +28,7 @@ export function NavSidebar() {
     { href: "/rooms", label: t("nav.rooms") },
     { href: "/bookings", label: t("nav.bookings") },
     { href: "/availability", label: t("nav.availability") },
+    { href: "/landing", label: t("nav.landing") },
   ];
 
   const handleLogout = async () => {

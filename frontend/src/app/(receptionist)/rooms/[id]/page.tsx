@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RoomCalendar } from "@/components/room-calendar";
+import { MediaManager } from "@/components/admin/MediaManager";
 
 function formatCurrency(amount: string): string {
   return formatVND(amount);
@@ -156,6 +157,15 @@ export default function RoomDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("rooms.mediaTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MediaManager scope="room" roomNumber={room.room_number} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
