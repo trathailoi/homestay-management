@@ -12,8 +12,16 @@ describe("toPhotoUrls", () => {
     ]);
   });
 
-  it("returns empty when no images present", () => {
+  it("returns empty when no media present", () => {
     expect(toPhotoUrls(["readme.md", ".gitkeep"], "hero")).toEqual([]);
+  });
+
+  it("includes video files alongside images", () => {
+    expect(toPhotoUrls(["tour.mp4", "shot.png", "clip.WEBM"], "rooms/101")).toEqual([
+      "/photos/rooms/101/clip.WEBM",
+      "/photos/rooms/101/shot.png",
+      "/photos/rooms/101/tour.mp4",
+    ]);
   });
 });
 

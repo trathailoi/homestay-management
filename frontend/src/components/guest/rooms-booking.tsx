@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { useTranslation } from "@/lib/language-context";
 import type { AvailableRoom, Room } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { Media } from "@/components/guest/media";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -278,8 +279,7 @@ function RoomCard({
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-card shadow-sm transition hover:shadow-md dark:border-white/10">
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
-        {/* eslint-disable-next-line @next/next/no-img-element -- dynamic public photo */}
-        <img src={photo} alt={name} className="size-full object-cover" />
+        <Media src={photo} alt={name} className="size-full object-cover" />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-start justify-between gap-2">

@@ -23,6 +23,10 @@ services:
       HOMESTAY_DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/homestay
       HOMESTAY_DATABASE_URL_SYNC: postgresql://postgres:postgres@db:5432/homestay
       HOMESTAY_JWT_SECRET_KEY: change-me-in-production
+      HOMESTAY_MEDIA_ROOT: /media
+    volumes:
+      # shared with frontend's public/photos; backend writes, frontend reads
+      - homestay-media:/media
     depends_on:
       db:
         condition: service_healthy
@@ -37,8 +41,12 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://backend:8000
+    volumes:
+      # same volume as backend /media; serves uploaded media as /photos/*
+      - homestay-media:/app/public/photos
     depends_on:
       - backend
 
 volumes:
   homestay-pgdata:
+  homestay-media:

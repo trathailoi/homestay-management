@@ -109,3 +109,21 @@ class OccupancyExceededError(BookingValidationError):
             code="OCCUPANCY_EXCEEDED",
             details=details,
         )
+
+
+class MediaValidationError(HomestayError):
+    """Raised when an uploaded media file fails validation."""
+
+    def __init__(self, message: str, details: dict | None = None):
+        super().__init__(message=message, code="MEDIA_VALIDATION", details=details)
+
+
+class MediaNotFoundError(HomestayError):
+    """Raised when a media file cannot be found for deletion."""
+
+    def __init__(self, filename: str):
+        super().__init__(
+            message=f"Media file {filename} not found",
+            code="MEDIA_NOT_FOUND",
+            details={"filename": filename},
+        )

@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # Availability configuration
     availability_window_days: int = 365
 
+    # Media uploads: shared-volume root (frontend reads the same dir at public/photos)
+    media_root: str = "/media"
+
     # JWT Authentication
     jwt_secret_key: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"

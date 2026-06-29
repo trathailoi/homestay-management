@@ -1,14 +1,14 @@
 "use client";
 
 import { useTranslation } from "@/lib/language-context";
+import { Media } from "@/components/guest/media";
 
 export function Hero({ photo }: { photo: string }) {
   const { t } = useTranslation();
 
   return (
     <section className="relative h-[80vh] min-h-[480px] w-full overflow-hidden">
-      {/* eslint-disable-next-line @next/next/no-img-element -- dynamic public photo, no fixed dimensions */}
-      <img
+      <Media
         src={photo}
         alt="View Biển"
         className="absolute inset-0 size-full object-cover"

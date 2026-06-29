@@ -9,12 +9,13 @@ import path from "node:path";
 
 export const PLACEHOLDER = "/photos/placeholder.svg";
 
-const IMAGE_RE = /\.(jpe?g|png|webp|avif)$/i;
+// images + video; the file extension is the type discriminator (see <Media>).
+const MEDIA_RE = /\.(jpe?g|png|webp|avif|mp4|webm)$/i;
 
-/** Pure: keep images, sort by name, map to /photos/<subdir>/<file> urls. */
+/** Pure: keep media files, sort by name, map to /photos/<subdir>/<file> urls. */
 export function toPhotoUrls(filenames: string[], subdir: string): string[] {
   return filenames
-    .filter((f) => IMAGE_RE.test(f))
+    .filter((f) => MEDIA_RE.test(f))
     .sort()
     .map((f) => `/photos/${subdir}/${f}`);
 }
