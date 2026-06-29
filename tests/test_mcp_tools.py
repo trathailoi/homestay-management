@@ -8,8 +8,8 @@ async def test_mcp_list_tools() -> None:
     """Test that all 12 expected MCP tools are registered."""
     from mcp_server.server import mcp
 
-    # Get registered tools from the tool manager
-    tools = mcp._tool_manager._tools
+    # Get registered tools via the public API
+    tools = {t.name for t in await mcp.list_tools()}
 
     expected_tools = [
         # Room management (4 tools)
@@ -30,7 +30,7 @@ async def test_mcp_list_tools() -> None:
     ]
 
     # Verify count
-    assert len(tools) == 12, f"Expected 12 tools, got {len(tools)}: {list(tools.keys())}"
+    assert len(tools) == 12, f"Expected 12 tools, got {len(tools)}: {sorted(tools)}"
 
     # Verify each expected tool is registered
     for tool_name in expected_tools:

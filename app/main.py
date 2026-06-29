@@ -1,10 +1,14 @@
 """FastAPI application entry point."""
 
+import asyncio
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
+from app.agent.poller import poll_loop
 from app.api.auth import router as auth_router
 from app.api.availability import router as availability_router
 from app.api.bookings import router as bookings_router
@@ -22,10 +26,21 @@ from app.exceptions import (
 )
 from app.services.auth_service import AuthenticationError
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run the Zalo poller as a background task for the app's lifetime."""
+    task = asyncio.create_task(poll_loop())
+    try:
+        yield
+    finally:
+        task.cancel()
+
+
 app = FastAPI(
     title="Homestay Management API",
     description="Room inventory, availability, and booking management for homestays",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # CORS middleware for Next.js development server

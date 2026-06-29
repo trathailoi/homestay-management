@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir .
 COPY alembic.ini ./
 COPY alembic/ ./alembic/
 COPY app/ ./app/
+COPY mcp_server/ ./mcp_server/
 COPY scripts/ ./scripts/
 
 EXPOSE 8000

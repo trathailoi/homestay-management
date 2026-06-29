@@ -24,6 +24,13 @@ services:
       HOMESTAY_DATABASE_URL_SYNC: postgresql://postgres:postgres@db:5432/homestay
       HOMESTAY_JWT_SECRET_KEY: change-me-in-production
       HOMESTAY_MEDIA_ROOT: /media
+      # Booking agent — values come from the gitignored .env (compose interpolation)
+      HOMESTAY_OPENAI_BASE_URL: ${HOMESTAY_OPENAI_BASE_URL:-https://api.openai.com/v1}
+      HOMESTAY_OPENAI_API_KEY: ${HOMESTAY_OPENAI_API_KEY:-}
+      HOMESTAY_AGENT_MODEL: ${HOMESTAY_AGENT_MODEL:-gpt-4o-mini}
+      HOMESTAY_AGENT_ALLOWED_SENDERS: ${HOMESTAY_AGENT_ALLOWED_SENDERS:-}
+      HOMESTAY_AGENT_ADMINS: ${HOMESTAY_AGENT_ADMINS:-}
+      HOMESTAY_ZALO_BOT_TOKEN: ${HOMESTAY_ZALO_BOT_TOKEN:-}
     volumes:
       # shared with frontend's public/photos; backend writes, frontend reads
       - homestay-media:/media
