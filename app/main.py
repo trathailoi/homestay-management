@@ -8,6 +8,7 @@ from sqlalchemy import text
 from app.api.auth import router as auth_router
 from app.api.availability import router as availability_router
 from app.api.bookings import router as bookings_router
+from app.api.media import router as media_router
 from app.api.rooms import router as rooms_router
 from app.database import SessionLocal
 from app.exceptions import (
@@ -15,6 +16,7 @@ from app.exceptions import (
     BookingValidationError,
     HomestayError,
     InvalidStatusTransitionError,
+    MediaNotFoundError,
     RoomNotAvailableError,
     RoomNotFoundError,
 )
@@ -41,6 +43,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(rooms_router, prefix="/api/v1")
 app.include_router(bookings_router, prefix="/api/v1")
 app.include_router(availability_router, prefix="/api/v1")
+app.include_router(media_router, prefix="/api/v1")
 
 
 # Global exception handlers
@@ -139,6 +142,24 @@ async def authentication_error_handler(
     """Handle authentication errors -> 401."""
     return JSONResponse(
         status_code=401,
+        content={
+            "success": False,
+            "error": {
+                "code": exc.code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        },
+    )
+
+
+@app.exception_handler(MediaNotFoundError)
+async def media_not_found_handler(
+    request: Request, exc: MediaNotFoundError
+) -> JSONResponse:
+    """Handle media not found errors -> 404."""
+    return JSONResponse(
+        status_code=404,
         content={
             "success": False,
             "error": {

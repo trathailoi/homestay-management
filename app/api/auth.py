@@ -1,15 +1,15 @@
 """Authentication API endpoints."""
 
-from uuid import UUID
-
-from fastapi import APIRouter, Cookie, Depends, Response
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import require_user
 from app.config import settings
 from app.database import get_session
+from app.models import User
 from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
 from app.schemas.common import SuccessResponse
-from app.services.auth_service import AuthenticationError, AuthService
+from app.services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -50,26 +50,19 @@ async def logout(response: Response) -> SuccessResponse[dict]:
 
 @router.get("/me")
 async def get_current_user(
-    access_token: str | None = Cookie(None),
-    session: AsyncSession = Depends(get_session),
+    user: User = Depends(require_user),
 ) -> SuccessResponse[UserResponse]:
     """Get currently authenticated user.
 
     Reads JWT from httpOnly cookie and returns user info.
     """
-    if not access_token:
-        raise AuthenticationError("Not authenticated")
-
-    service = AuthService(session)
-    payload = service.decode_token(access_token)
-    user = await service.get_user_by_id(UUID(payload["sub"]))
     return SuccessResponse(data=UserResponse.model_validate(user))
 
 
 @router.post("/register")
 async def register(
     data: RegisterRequest,
-    access_token: str | None = Cookie(None),
+    _caller: User = Depends(require_user),
     session: AsyncSession = Depends(get_session),
 ) -> SuccessResponse[UserResponse]:
     """Register a new user account.
@@ -81,15 +74,6 @@ async def register(
     For MVP, any authenticated user can create new users.
     Future: restrict to admin-role users only.
     """
-    # Require authentication to create new users
-    if not access_token:
-        raise AuthenticationError("Authentication required to register users")
-
     service = AuthService(session)
-
-    # Verify the caller is authenticated
-    service.decode_token(access_token)
-
-    # Create the new user
     user = await service.register(data.username, data.password, data.role)
     return SuccessResponse(data=UserResponse.model_validate(user))
