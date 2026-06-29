@@ -241,5 +241,17 @@
   "guest.contactTitle": "Liên hệ đặt phòng",
   "guest.contactHost": "Cô Đào",
   "guest.reviewsTitle": "Khách nói gì về chúng tôi",
-  "guest.viewOnGoogle": "Xem tất cả đánh giá trên Google"
+  "guest.viewOnGoogle": "Xem tất cả đánh giá trên Google",
+  "media.upload": "Tải ảnh / video",
+  "media.uploading": "Đang tải lên…",
+  "media.delete": "Xóa",
+  "media.empty": "Chưa có ảnh/video.",
+  "media.uploadError": "Tải lên thất bại",
+  "nav.landing": "Ảnh trang chủ",
+  "landing.title": "Ảnh & video trang chủ",
+  "landing.heroTitle": "Ảnh bìa",
+  "landing.heroHint": "Hiển thị toàn màn hình ở đầu trang chủ (dùng mục đầu tiên).",
+  "landing.galleryTitle": "Thư viện",
+  "landing.galleryHint": "Hiển thị trong lưới ảnh ở trang chủ.",
+  "rooms.mediaTitle": "Ảnh & video"
 }

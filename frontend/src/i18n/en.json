@@ -241,5 +241,17 @@
   "guest.contactTitle": "Contact to book",
   "guest.contactHost": "Ms. Đào",
   "guest.reviewsTitle": "What guests say",
-  "guest.viewOnGoogle": "See all reviews on Google"
+  "guest.viewOnGoogle": "See all reviews on Google",
+  "media.upload": "Upload photo / video",
+  "media.uploading": "Uploading…",
+  "media.delete": "Delete",
+  "media.empty": "No media yet.",
+  "media.uploadError": "Upload failed",
+  "nav.landing": "Landing media",
+  "landing.title": "Landing page media",
+  "landing.heroTitle": "Hero",
+  "landing.heroHint": "Shown full-screen at the top of the landing page (first item is used).",
+  "landing.galleryTitle": "Gallery",
+  "landing.galleryHint": "Shown in the photo grid on the landing page.",
+  "rooms.mediaTitle": "Photos & video"
 }
