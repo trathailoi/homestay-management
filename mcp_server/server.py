@@ -40,6 +40,7 @@ def _booking_to_dict(booking: Any) -> dict:
     """Convert a Booking model to a dict for MCP response."""
     return {
         "id": str(booking.id),
+        "booking_code": booking.booking_code,
         "room_id": str(booking.room_id),
         "room_number": booking.room.room_number,
         "guest_name": booking.guest_name,
@@ -315,6 +316,29 @@ async def get_booking(booking_id: str) -> dict:
         async with SessionLocal() as session:
             service = BookingService(session)
             booking = await service.get_booking(UUID(booking_id))
+            return _booking_to_dict(booking)
+    except HomestayError as e:
+        return {"error": e.code, "message": e.message, "details": e.details}
+
+
+@mcp.tool()
+async def get_booking_by_code(booking_code: str) -> dict:
+    """Look up a booking by its friendly booking code.
+
+    Use this for check-in: guests and receptionists refer to a booking by its
+    short code (e.g. 'K7M2QP4R'), not the UUID. Returns the booking (including
+    its 'id'); then call check_in with that id. Case-insensitive.
+
+    Args:
+        booking_code: The friendly booking code from the guest
+
+    Returns:
+        Booking dict with full details, or error dict if not found.
+    """
+    try:
+        async with SessionLocal() as session:
+            service = BookingService(session)
+            booking = await service.get_booking_by_code(booking_code)
             return _booking_to_dict(booking)
     except HomestayError as e:
         return {"error": e.code, "message": e.message, "details": e.details}

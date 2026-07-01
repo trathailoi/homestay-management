@@ -1,5 +1,6 @@
 """Booking service with lifecycle management and conflict prevention."""
 
+import secrets
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from uuid import UUID
@@ -28,6 +29,14 @@ VALID_TRANSITIONS = {
     "checked_out": [],
     "cancelled": [],
 }
+
+# Friendly booking-code alphabet: uppercase, no easily-confused chars (0/O, 1/I/L).
+_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
+
+
+def generate_booking_code(length: int = 8) -> str:
+    """Generate a short, human-friendly booking code (e.g. 'K7M2QP4R')."""
+    return "".join(secrets.choice(_CODE_ALPHABET) for _ in range(length))
 
 
 class BookingService:
@@ -121,6 +130,7 @@ class BookingService:
         # Create booking
         booking = Booking(
             room_id=data.room_id,
+            booking_code=await self._unique_booking_code(),
             guest_name=data.guest_name,
             guest_phone=data.guest_phone,
             check_in_date=data.check_in_date,
@@ -162,6 +172,21 @@ class BookingService:
         row = result.scalar_one_or_none()
         return row if row else None
 
+    async def _unique_booking_code(self) -> str:
+        """Generate a booking code not already used (unique index is the backstop)."""
+        for _ in range(10):
+            code = generate_booking_code()
+            exists = await self.session.scalar(
+                select(Booking.id).where(Booking.booking_code == code)
+            )
+            if not exists:
+                return code
+        raise BookingValidationError(
+            message="Could not generate a unique booking code",
+            code="CODE_GENERATION_FAILED",
+            details={},
+        )
+
     async def get_booking(self, booking_id: UUID) -> Booking:
         """Get a booking by ID.
 
@@ -170,6 +195,19 @@ class BookingService:
         booking = await self.session.get(Booking, booking_id)
         if not booking:
             raise BookingNotFoundError(str(booking_id))
+        return booking
+
+    async def get_booking_by_code(self, booking_code: str) -> Booking:
+        """Get a booking by its friendly code (case-insensitive).
+
+        Raises BookingNotFoundError if not found.
+        """
+        code = booking_code.strip().upper()
+        booking = await self.session.scalar(
+            select(Booking).where(Booking.booking_code == code)
+        )
+        if not booking:
+            raise BookingNotFoundError(code)
         return booking
 
     async def list_bookings(

@@ -68,6 +68,7 @@ class BookingResponse(BaseModel):
     model_config = {"from_attributes": True}
 
     id: UUID
+    booking_code: str
     room_id: UUID
     room_number: str  # Eagerly loaded from room relationship
     guest_name: str

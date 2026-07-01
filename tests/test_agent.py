@@ -10,11 +10,11 @@ from app.agent import access, chat, loop, tools
 from app.config import settings
 
 
-async def test_build_tool_specs_has_all_12_tools():
+async def test_build_tool_specs_has_all_tools():
     specs = await tools.build_tool_specs()
     names = {s["function"]["name"] for s in specs}
-    assert len(specs) == 12
-    assert "create_booking" in names
+    assert len(specs) == 13
+    assert {"create_booking", "get_booking_by_code"} <= names
     assert all(s["type"] == "function" and "parameters" in s["function"] for s in specs)
 
 

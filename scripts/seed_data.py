@@ -24,7 +24,7 @@ from app.models import Booking, Room, RoomAvailability
 from app.schemas.booking import BookingCreate
 from app.schemas.room import RoomCreate
 from app.services.auth_service import AuthService
-from app.services.booking_service import BookingService
+from app.services.booking_service import BookingService, generate_booking_code
 from app.services.room_service import RoomService
 
 
@@ -215,6 +215,7 @@ async def _insert_direct_booking(session, room, b):
 
     booking = Booking(
         room_id=room.id,
+        booking_code=generate_booking_code(),
         guest_name=b["guest_name"],
         guest_phone=b["guest_phone"],
         check_in_date=b["check_in_date"],

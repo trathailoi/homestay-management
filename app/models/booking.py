@@ -25,6 +25,13 @@ class Booking(Base):
         ForeignKey("rooms.id"),
         nullable=False,
     )
+    # Friendly, human-readable code guests/receptionists use to check in
+    booking_code: Mapped[str] = mapped_column(
+        String(12),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
     guest_name: Mapped[str] = mapped_column(String(200), nullable=False)
     guest_phone: Mapped[str] = mapped_column(String(50), nullable=False)
     check_in_date: Mapped[date] = mapped_column(Date, nullable=False)

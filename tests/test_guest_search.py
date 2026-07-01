@@ -38,6 +38,7 @@ async def bookings_for_search(
 
     booking1 = Booking(
         room_id=room_for_search.id,
+        booking_code="TESTCODE1",
         guest_name="John Smith",
         guest_phone="+1-555-123-4567",
         check_in_date=check_in,
@@ -53,6 +54,7 @@ async def bookings_for_search(
 
     booking2 = Booking(
         room_id=room_for_search.id,
+        booking_code="TESTCODE2",
         guest_name="Jane Doe",
         guest_phone="+1-555-987-6543",
         check_in_date=check_in2,

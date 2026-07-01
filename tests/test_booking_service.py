@@ -83,6 +83,33 @@ async def test_create_booking(
 
 
 @pytest.mark.asyncio
+async def test_booking_code_generated_and_looked_up(
+    booking_service: BookingService, test_room: Room
+) -> None:
+    """Each booking gets a friendly code, findable case-insensitively for check-in."""
+    check_in = date.today() + timedelta(days=1)
+    data = BookingCreate(
+        room_id=test_room.id,
+        guest_name="Code Guest",
+        guest_phone="+1234567890",
+        check_in_date=check_in,
+        check_out_date=check_in + timedelta(days=1),
+        num_guests=1,
+    )
+
+    booking = await booking_service.create_booking(data)
+    assert booking.booking_code  # non-empty
+    assert booking.booking_code == booking.booking_code.upper()
+
+    # lookup is case-insensitive (guests may type lowercase)
+    found = await booking_service.get_booking_by_code(booking.booking_code.lower())
+    assert found.id == booking.id
+
+    with pytest.raises(BookingNotFoundError):
+        await booking_service.get_booking_by_code("NOSUCHCODE")
+
+
+@pytest.mark.asyncio
 async def test_create_booking_marks_dates_unavailable(
     booking_service: BookingService,
     availability_service: AvailabilityService,

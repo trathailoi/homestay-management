@@ -34,7 +34,10 @@ def _system_prompt() -> str:
         "create_room, update_room, check_in, check_out), first summarise the "
         "exact change — room, dates, guest, total VND — and wait for the staff "
         "member to say yes. Never invent room IDs or booking IDs; look them up "
-        "with the tools. When a tool returns an 'error' field, explain it plainly."
+        "with the tools. When a tool returns an 'error' field, explain it plainly.\n\n"
+        "After creating or confirming a booking, ALWAYS tell the guest their "
+        "booking code (the 'booking_code' field) clearly, and say to give it at "
+        "check-in. To check a guest in, look them up with get_booking_by_code first."
     )
 
 

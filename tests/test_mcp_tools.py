@@ -19,9 +19,10 @@ async def test_mcp_list_tools() -> None:
         "update_room",
         # Availability (1 tool)
         "check_availability",
-        # Booking lifecycle (7 tools)
+        # Booking lifecycle (8 tools)
         "create_booking",
         "get_booking",
+        "get_booking_by_code",
         "list_bookings",
         "confirm_booking",
         "cancel_booking",
@@ -30,7 +31,7 @@ async def test_mcp_list_tools() -> None:
     ]
 
     # Verify count
-    assert len(tools) == 12, f"Expected 12 tools, got {len(tools)}: {sorted(tools)}"
+    assert len(tools) == 13, f"Expected 13 tools, got {len(tools)}: {sorted(tools)}"
 
     # Verify each expected tool is registered
     for tool_name in expected_tools:

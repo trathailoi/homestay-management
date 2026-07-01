@@ -126,6 +126,7 @@ def _booking_to_response(booking) -> BookingResponse:
     """Convert booking model to response, including room_number."""
     return BookingResponse(
         id=booking.id,
+        booking_code=booking.booking_code,
         room_id=booking.room_id,
         room_number=booking.room.room_number,
         guest_name=booking.guest_name,
